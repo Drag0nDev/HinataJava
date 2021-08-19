@@ -1,15 +1,35 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <configuration debug="false">
 
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <property name="DEV_HOME" value="./logs"/>
+
+    <!--CONSOLE -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} %red(%10.10X{jda.shard}) %highlight(%-6level) %msg%n</pattern>
+            <pattern>%highlight([) %boldWhite(%d{dd.MM.yyyy HH:mm:ss}) %highlight(]) %highlight([) %boldWhite(%-5level) %highlight(]) %boldRed(-) %white(%msg) %n</pattern>
         </encoder>
     </appender>
 
+    <!--FILE OUT-->
+    <appender name="FILE-AUDIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <file>${DEV_HOME}/hinata.log</file>
+        <encoder>
+            <pattern>%d{dd.MM.yyyy HH:mm:ss} [ %-5level] %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${DEV_HOME}/archived/hinata-%d{dd.MM.yyyy}.%i.log</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>60</maxHistory>
+            <totalSizeCap>20GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
 
-    <root level="info">
-        <appender-ref ref="STDOUT" />
+    <!--Root logger-->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE-AUDIT"/>
     </root>
-
 </configuration>
