@@ -10,13 +10,15 @@ group 'org.hinata'
 version '1.0-SNAPSHOT'
 
 def jdaVersion = '4.3.0_307'
-sourceCompatibility = JavaVersion.VERSION_11
+
+java {
+    sourceCompatibility = targetCompatibility = JavaVersion.VERSION_11
+}
 
 repositories {
     mavenCentral()
-    maven {
-        url "https://m2.dv8tion.net/releases"
-    }
+    maven { url "https://m2.dv8tion.net/releases" }
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -25,6 +27,7 @@ dependencies {
     implementation("net.dv8tion:JDA:$jdaVersion")
     implementation(group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3')
     implementation('com.googlecode.json-simple:json-simple:1.1.1')
+    implementation group: 'com.github.rainestormee', name: 'jda-command', version: '1.1.6'
 }
 
 test {

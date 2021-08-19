@@ -2,4 +2,5 @@
 build/
 .gradle/
 out/
-config.json
+logs/
+src/main/resources/config.json
