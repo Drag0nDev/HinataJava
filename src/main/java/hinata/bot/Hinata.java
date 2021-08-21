@@ -1,7 +1,5 @@
 package hinata.bot;
 
-import ch.qos.logback.core.db.dialect.DBUtil;
-import com.github.rainestormee.jdacommand.AbstractCommand;
 import com.github.rainestormee.jdacommand.CommandHandler;
 import hinata.bot.Commands.CommandListener;
 import hinata.bot.Commands.CommandLoader;
@@ -21,6 +19,8 @@ import org.slf4j.LoggerFactory;
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Hinata {
     private final Config config = new Config();
@@ -61,5 +61,35 @@ public class Hinata {
 
     public Config getConfig() {
         return config;
+    }
+
+    public Logger getLogger() {
+        return LOGGER;
+    }
+
+    public CommandHandler<Message> getCmdHandler() {
+        return CMD_HANDLER;
+    }
+
+    public String[] getArguments( @NotNull Message msg) {
+        //find the used prefix
+        String raw = msg.getContentRaw();
+        List<String> prefix = this.getConfig().getPrefix();
+        String usedPrefix = "";
+        int i = 0;
+
+        while (usedPrefix.equals("")) {
+            String toFind = "^" + prefix.get(i);
+            Pattern pattern = Pattern.compile(toFind, Pattern.CASE_INSENSITIVE);
+            Matcher matcher = pattern.matcher(raw);
+            boolean matchFound = matcher.find();
+            if (matchFound) usedPrefix = prefix.get(i);
+            i++;
+        }
+
+        raw = raw.replaceFirst(Pattern.quote(usedPrefix), "");
+        String[] split = raw.split("\\s+");
+
+        return Arrays.copyOfRange(split, 1, split.length);
     }
 }

@@ -15,7 +15,6 @@ public class Config {
     private final String token;
     private final String owner;
     private final List<String> prefix;
-    private final String currencyEmoji;
     private final long levelXp;
 
     public Config() throws IOException, ParseException {
@@ -28,7 +27,6 @@ public class Config {
 
         this.token = (String) config.get("token");
         this.owner = (String) config.get("owner");
-        this.currencyEmoji = (String) config.get("currencyEmoji");
         this.levelXp = (long) config.get("levelXp");
 
         JSONArray prefix = (JSONArray) config.get("prefix");
@@ -45,10 +43,6 @@ public class Config {
 
     public List<String> getPrefix() {
         return prefix;
-    }
-
-    public String getCurrencyEmoji() {
-        return currencyEmoji;
     }
 
     public long getLevelXp() {

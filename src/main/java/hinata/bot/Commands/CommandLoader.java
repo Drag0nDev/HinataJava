@@ -6,8 +6,8 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import hinata.bot.Commands.commands.CmdHelp;
-import hinata.bot.Commands.commands.CmdPing;
+import hinata.bot.Commands.commands.fun.*;
+import hinata.bot.Commands.commands.info.*;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -20,8 +20,12 @@ public class CommandLoader {
 
     public CommandLoader(Hinata bot) throws IOException, ParseException {
         loadCommands(
+                //info commands
                 new CmdHelp(bot),
-                new CmdPing(bot)
+                new CmdPing(bot),
+
+                //fun commands
+                new CmdPp(bot)
         );
 
         LOGGER.info("Loaded {} commands!", COMMANDS.size());

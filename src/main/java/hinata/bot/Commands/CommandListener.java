@@ -71,7 +71,7 @@ public class CommandListener extends ListenerAdapter {
             }
 
             raw = raw.replaceFirst(Pattern.quote(usedPrefix), "");
-            String[] args = Arrays.copyOf(raw.split("\\s+"), 2);
+            String[] args = Arrays.copyOf(raw.trim().split("\\s+"), 2);
 
             TextChannel tc = event.getChannel();
             Member self = guild.getSelfMember();
@@ -102,7 +102,7 @@ public class CommandListener extends ListenerAdapter {
                                 "Channel: '{}'",
                         args[0], arguments, user.getAsTag(), user.getId(), guild.getName(), guild.getId(), tc.getName()
                 );
-                HANDLER.execute(command, msg, arguments, args[0]);
+                HANDLER.execute(command, msg, arguments);
             } catch (Exception e) {
                 LOGGER.error("Couldn't preform command {}!", args[0], e);
             }
