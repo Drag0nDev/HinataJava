@@ -18,7 +18,7 @@ public class CommandLoader {
     private final Set<Command> COMMANDS = new HashSet<>();
     private final Logger LOGGER = LoggerFactory.getLogger(Listener.class);
 
-    public CommandLoader(Hinata bot) throws IOException, ParseException {
+    public CommandLoader(Hinata bot) {
         loadCommands(
                 //info commands
                 new CmdAvatar(bot),
