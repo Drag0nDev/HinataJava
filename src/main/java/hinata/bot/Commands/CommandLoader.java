@@ -21,6 +21,7 @@ public class CommandLoader {
     public CommandLoader(Hinata bot) throws IOException, ParseException {
         loadCommands(
                 //info commands
+                new CmdAvatar(bot),
                 new CmdHelp(bot),
                 new CmdPing(bot),
 
