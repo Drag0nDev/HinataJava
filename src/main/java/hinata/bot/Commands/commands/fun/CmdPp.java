@@ -24,7 +24,6 @@ import java.util.regex.Pattern;
         attributes = {
                 @CommandAttribute(key = "category", value = "fun"),
                 @CommandAttribute(key = "usage", value = "[command | alias] <user mention>"),
-                @CommandAttribute(key = "help", value = "[command | alias] <user mention>"),
         }
 )
 
@@ -57,7 +56,7 @@ public class CmdPp implements Command {
             member = msg.getMember();
         }
 
-        mc.sendMessage(embed.build()).queue(message -> {
+        mc.sendMessageEmbeds(embed.build()).queue(message -> {
             StringBuilder desc = new StringBuilder();
             assert member != null;
             desc.append("**").append(member.getUser().getAsTag()).append("**'s pp:\n").append("**").append(getPP()).append("**");

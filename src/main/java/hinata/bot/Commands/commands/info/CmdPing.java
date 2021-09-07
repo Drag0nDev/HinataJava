@@ -14,7 +14,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import java.util.Date;
 
 @CommandDescription(
-        name = "Ping",
+        name = "ping",
         description = "Response time of the bot",
         triggers = {"ping"},
         attributes = {
