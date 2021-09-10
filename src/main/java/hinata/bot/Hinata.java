@@ -5,9 +5,14 @@ import hinata.bot.Commands.CommandListener;
 import hinata.bot.Commands.CommandLoader;
 import hinata.bot.util.Config;
 import hinata.bot.util.Listener;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
@@ -22,11 +27,13 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static net.dv8tion.jda.api.interactions.commands.OptionType.*;
+
 public class Hinata {
     private final Config config = new Config();
     private static final Logger LOGGER = LoggerFactory.getLogger(Listener.class);
 
-    private ShardManager shardManager = null;
+    private JDA bot = null;
 
     private final CommandLoader commandLoader = new CommandLoader(this);
     private final CommandHandler<Message> CMD_HANDLER = new CommandHandler<>();
@@ -45,7 +52,7 @@ public class Hinata {
     private void setup() throws LoginException, IOException, ParseException {
         CMD_HANDLER.registerCommands(new HashSet<>(commandLoader.getCommands()));
 
-        shardManager = DefaultShardManagerBuilder
+        bot = JDABuilder
                 .createDefault(config.getToken())
                 .disableIntents(GatewayIntent.GUILD_VOICE_STATES)
                 .enableIntents(GatewayIntent.GUILD_MEMBERS)
@@ -54,9 +61,14 @@ public class Hinata {
                         new CommandListener(this, CMD_HANDLER),
                         new Listener(this)
                 )
-                .setShardsTotal(-1)
                 .setActivity(Activity.playing("on a mission with Naruto"))
                 .build();
+
+        commandLoader.loadSlashCommands(this);
+    }
+
+    public JDA getBot() {
+        return bot;
     }
 
     public Config getConfig() {

@@ -1,7 +1,6 @@
 package hinata.bot.Commands.commands.info;
 
-import com.github.rainestormee.jdacommand.CommandAttribute;
-import com.github.rainestormee.jdacommand.CommandDescription;
+import com.github.rainestormee.jdacommand.*;
 import hinata.bot.Commands.Command;
 import hinata.bot.Hinata;
 import hinata.bot.constants.Colors;
@@ -10,6 +9,9 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 
 import java.util.Date;
 
@@ -20,12 +22,15 @@ import java.util.Date;
         attributes = {
                 @CommandAttribute(key = "category", value = "info"),
                 @CommandAttribute(key = "usage", value = "[command | alias]"),
-                @CommandAttribute(key = "help", value = "[command | alias]")
+                @CommandAttribute(key = "examples", value = "h!ping")
         }
 )
 
 public class CmdPing implements Command {
     private final Hinata bot;
+    protected final String optionName = "user";
+
+    private final CommandData slashInfo = new CommandData(optionName, "Response time of the bot");
 
     public CmdPing(Hinata bot) {
         this.bot = bot;
@@ -46,5 +51,32 @@ public class CmdPing implements Command {
                 .setTimestamp(now.toInstant());
 
         msg.getChannel().sendMessageEmbeds(embed.build()).queue();
+    }
+
+    @Override
+    public void run(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) {
+        Date now = new Date();
+        Date sent = new Date(event.getTimeCreated().toInstant().toEpochMilli());
+
+        long ping = now.getTime() - sent.getTime();
+
+        EmbedBuilder embed = new EmbedBuilder();
+
+        embed.setTitle("Ping")
+                .setDescription(ping + "ms")
+                .setColor(Colors.NORMAL.getCode())
+                .setTimestamp(now.toInstant());
+
+        hook.sendMessageEmbeds(embed.build()).queue();
+    }
+
+    @Override
+    public CommandData slashInfo() {
+        return slashInfo;
+    }
+
+    @Override
+    public String getOptionName() {
+        return optionName;
     }
 }

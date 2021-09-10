@@ -1,16 +1,18 @@
 package hinata.bot.Commands.commands.info;
 
-import com.github.rainestormee.jdacommand.CommandAttribute;
-import com.github.rainestormee.jdacommand.CommandDescription;
+import com.github.rainestormee.jdacommand.*;
 import hinata.bot.Commands.Command;
 import hinata.bot.Hinata;
 import hinata.bot.constants.Colors;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import static net.dv8tion.jda.api.interactions.commands.OptionType.USER;
+
 @CommandDescription(
         name = "avatar",
         description = "Get the avatar of yourself/another person",
@@ -27,6 +29,11 @@ import java.util.Map;
 public class CmdAvatar implements Command {
 
     private final Hinata bot;
+    protected final String optionName = "avatar";
+
+    private final CommandData slashInfo = new CommandData(optionName, "Get the avatar of yourself/another person")
+            .addOptions(new OptionData(USER, "user", "the person you want to see it of")
+                    .setRequired(false));
 
     public CmdAvatar(Hinata bot) {
         this.bot = bot;
@@ -53,5 +60,23 @@ public class CmdAvatar implements Command {
                 .setTitle("Avatar of: " + member.getUser().getAsTag())
                 .setImage(member.getUser().getEffectiveAvatarUrl() + "?size=4096")
                 .build()).queue();
+    }
+
+    @Override
+    public void run(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) {
+        hook.sendMessageEmbeds(new EmbedBuilder().setColor(Colors.NORMAL.getCode())
+                .setTitle("Avatar of: " + member.getUser().getAsTag())
+                .setImage(member.getUser().getEffectiveAvatarUrl() + "?size=4096")
+                .build()).queue();
+    }
+
+    @Override
+    public CommandData slashInfo() {
+        return slashInfo;
+    }
+
+    @Override
+    public String getOptionName() {
+        return optionName;
     }
 }

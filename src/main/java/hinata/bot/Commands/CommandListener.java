@@ -5,6 +5,7 @@ import hinata.bot.Hinata;
 import hinata.bot.util.Listener;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +34,50 @@ public class CommandListener extends ListenerAdapter {
     public CommandListener(Hinata bot, CommandHandler<Message> HANDLER) {
         this.bot = bot;
         this.HANDLER = HANDLER;
+    }
+
+    @Override
+    public void onSlashCommand(SlashCommandEvent event) {
+        if (event.getGuild() == null)
+            return;
+
+        CMD_EXECUTOR.execute(() -> {
+            Guild guild = event.getGuild();
+            User user = event.getUser();
+
+            MessageChannel tc = event.getChannel();
+            Member self = guild.getSelfMember();
+
+            Command command = (Command) HANDLER.findCommand(event.getName());
+
+            if (!self.hasPermission((GuildChannel) tc, Permission.MESSAGE_WRITE))
+                return;
+
+            if (command.getAttribute("category").equals("owner") && !user.getId().equals(bot.getConfig().getOwner()))
+                return;
+
+            try {
+                LOGGER.info("------------------------------\n" +
+                                "Command: '{}'\n" +
+                                "Arguments: '{}'\n" +
+                                "User: '{}'\n" +
+                                "User ID: '{}'\n" +
+                                "Server: '{}'\n" +
+                                "Server ID: '{}'\n" +
+                                "Channel: '{}'",
+                        event.getName(),
+                        event.getOption(command.getOptionName()) == null ? "" : event.getOption(command.getOptionName()).getAsString(),
+                        user.getAsTag(),
+                        user.getId(),
+                        guild.getName(),
+                        guild.getId(),
+                        tc.getName()
+                );
+                command.executeSlash(event);
+            } catch (Exception e) {
+                LOGGER.error("Couldn't preform command {}!", event.getName(), e);
+            }
+        });
     }
 
     @Override
@@ -71,7 +116,7 @@ public class CommandListener extends ListenerAdapter {
             }
 
             raw = raw.replaceFirst(Pattern.quote(usedPrefix), "");
-            String[] args = Arrays.copyOf(raw.trim().split("\\s+"), 2);
+            String[] args = raw.trim().split("\\s+");
 
             TextChannel tc = event.getChannel();
             Member self = guild.getSelfMember();
