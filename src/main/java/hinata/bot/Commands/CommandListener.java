@@ -2,18 +2,25 @@ package hinata.bot.Commands;
 
 import com.github.rainestormee.jdacommand.CommandHandler;
 import hinata.bot.Hinata;
+import hinata.bot.constants.Colors;
 import hinata.bot.util.Listener;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.requests.RestAction;
+import net.dv8tion.jda.api.requests.restaction.InviteAction;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
@@ -60,10 +67,10 @@ public class CommandListener extends ListenerAdapter {
 
             String args;
 
-            if (command.getOptionName() == null){
+            if (command.getOptionName() == null) {
                 args = "";
             } else {
-                args = event.getOption(command.getOptionName()) == null ? "" : event.getOption(command.getOptionName()).getAsString();
+                args = event.getOption(command.getOptionName()) == null ? "" : Objects.requireNonNull(event.getOption(command.getOptionName())).getAsString();
             }
 
             try {
@@ -85,13 +92,14 @@ public class CommandListener extends ListenerAdapter {
                 );
                 command.executeSlash(bot, event);
             } catch (Exception e) {
+                sendError(null, event);
                 LOGGER.error("Couldn't preform command {}!", event.getName(), e);
             }
         });
     }
 
     @Override
-    public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event){
+    public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
         CMD_EXECUTOR.execute(() -> {
             if (!event.getChannel().getType().equals(ChannelType.TEXT))
                 return;
@@ -174,7 +182,8 @@ public class CommandListener extends ListenerAdapter {
                 );
                 HANDLER.execute(command, msg, (Object[]) arguments);
             } catch (Exception e) {
-                LOGGER.error("Couldn't preform command {}!", args[0], e);
+                sendError(tc, null);
+                LOGGER.info("Couldn't preform command {}!", command.getDescription().name(), e);
             }
         });
     }
@@ -191,5 +200,35 @@ public class CommandListener extends ListenerAdapter {
         }
 
         return false;
+    }
+
+    private void sendError(TextChannel tc, SlashCommandEvent event) {
+        String inviteLink;
+        Optional<Invite> invite;
+        Guild support = bot.getBot().getGuildById("645047329141030936");
+        List<Invite> invites = Objects.requireNonNull(support).retrieveInvites().complete();
+
+
+        invite = invites.stream().findFirst();
+        if (invite.isPresent())
+            inviteLink = invite.get().getUrl();
+        else {
+            Invite base = Objects.requireNonNull(support.getDefaultChannel())
+                    .createInvite()
+                    .complete();
+            inviteLink = base.getUrl();
+        }
+
+        EmbedBuilder embed = new EmbedBuilder().setColor(Colors.ERROR.getCode())
+                .setTitle("An error occurred")
+                .setDescription("An error occurred and the command stopped executing.\n" +
+                        "Please report this to the bot developer in the **[support server](" + inviteLink + ")**")
+                .setTimestamp(ZonedDateTime.now());
+
+        if (tc != null) {
+            tc.sendMessageEmbeds(embed.build()).queue();
+        } else {
+            event.getHook().sendMessageEmbeds(embed.build()).queue();
+        }
     }
 }

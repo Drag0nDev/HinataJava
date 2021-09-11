@@ -63,9 +63,17 @@ public class CmdPp implements Command {
             member = msg.getMember();
         }
 
+        if (member == null) {
+            try {
+                throw new Exception("member value is null");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return;
+        }
+
         mc.sendMessageEmbeds(embed.build()).queue(message -> {
             StringBuilder desc = new StringBuilder();
-            assert member != null;
             desc.append("**").append(member.getUser().getAsTag()).append("**'s pp:\n").append("**").append(getPP()).append("**");
 
             try {

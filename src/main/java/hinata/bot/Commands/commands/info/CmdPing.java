@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 
+import java.awt.*;
 import java.util.Date;
 
 @CommandDescription(

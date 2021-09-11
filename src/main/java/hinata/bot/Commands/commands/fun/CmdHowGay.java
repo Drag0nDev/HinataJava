@@ -96,11 +96,19 @@ public class CmdHowGay implements Command {
             member = msg.getMember();
         }
 
+        if (member == null) {
+            try {
+                throw new Exception("member value is null");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return;
+        }
+
         mc.sendMessageEmbeds(embed.build()).queue(message -> {
             StringBuilder desc = new StringBuilder();
             int gayrate = getGayrate();
 
-            assert member != null;
             desc.append("**").append(member.getUser().getAsTag()).append("** is: ").append("**").append(gayrate).append("%** gay!");
             embed.setDescription(desc);
 
