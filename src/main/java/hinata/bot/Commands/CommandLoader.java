@@ -2,9 +2,6 @@ package hinata.bot.Commands;
 
 import hinata.bot.Hinata;
 import hinata.bot.util.Listener;
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,9 +13,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
-import static net.dv8tion.jda.api.interactions.commands.OptionType.USER;
-
 public class CommandLoader {
     private final Set<Command> COMMANDS = new HashSet<>();
     private final Set<Command> SLASH = new HashSet<>();
@@ -26,13 +20,14 @@ public class CommandLoader {
 
     public CommandLoader(Hinata bot) {
         loadCommands(
+                //fun commands
+                new CmdBonk(bot),
+                new CmdGetIp(bot),
+                new CmdPp(bot),
                 //info commands
                 new CmdAvatar(bot),
                 new CmdHelp(bot),
-                new CmdPing(bot),
-
-                //fun commands
-                new CmdPp(bot)
+                new CmdPing(bot)
         );
 
         LOGGER.info("Loaded {} commands!", COMMANDS.size());
