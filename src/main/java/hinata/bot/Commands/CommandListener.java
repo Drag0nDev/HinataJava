@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
@@ -50,11 +49,22 @@ public class CommandListener extends ListenerAdapter {
 
             Command command = (Command) HANDLER.findCommand(event.getName());
 
+            if (command == null)
+                return;
+
             if (!self.hasPermission((GuildChannel) tc, Permission.MESSAGE_WRITE))
                 return;
 
             if (command.getAttribute("category").equals("owner") && !user.getId().equals(bot.getConfig().getOwner()))
                 return;
+
+            String args;
+
+            if (command.getOptionName() == null){
+                args = "";
+            } else {
+                args = event.getOption(command.getOptionName()) == null ? "" : event.getOption(command.getOptionName()).getAsString();
+            }
 
             try {
                 LOGGER.info("------------------------------\n" +
@@ -66,14 +76,14 @@ public class CommandListener extends ListenerAdapter {
                                 "Server ID: '{}'\n" +
                                 "Channel: '{}'",
                         event.getName(),
-                        event.getOption(command.getOptionName()) == null ? "" : event.getOption(command.getOptionName()).getAsString(),
+                        args,
                         user.getAsTag(),
                         user.getId(),
                         guild.getName(),
                         guild.getId(),
                         tc.getName()
                 );
-                command.executeSlash(event);
+                command.executeSlash(bot, event);
             } catch (Exception e) {
                 LOGGER.error("Couldn't preform command {}!", event.getName(), e);
             }
@@ -116,7 +126,7 @@ public class CommandListener extends ListenerAdapter {
             }
 
             raw = raw.replaceFirst(Pattern.quote(usedPrefix), "");
-            String[] args = raw.trim().split("\\s+");
+            String[] args = Arrays.copyOfRange(raw.trim().split("\\s+"), 0, 10);
 
             TextChannel tc = event.getChannel();
             Member self = guild.getSelfMember();
@@ -136,7 +146,16 @@ public class CommandListener extends ListenerAdapter {
                 return;
 
             try {
-                String arguments = args[1] == null ? "" : args[1];
+                for (i = 1; i < 10; i++) {
+                    if (args[i] == null)
+                        args[i] = "";
+                }
+                String[] arguments = Arrays.copyOfRange(args, 1, 10);
+                StringBuilder argumentsLog = new StringBuilder();
+                for (String arg : arguments) {
+                    if (!arg.equals(""))
+                        argumentsLog.append(arg).append(" ");
+                }
                 LOGGER.info("------------------------------\n" +
                                 "Command: '{}'\n" +
                                 "Arguments: '{}'\n" +
@@ -145,9 +164,15 @@ public class CommandListener extends ListenerAdapter {
                                 "Server: '{}'\n" +
                                 "Server ID: '{}'\n" +
                                 "Channel: '{}'",
-                        args[0], arguments, user.getAsTag(), user.getId(), guild.getName(), guild.getId(), tc.getName()
+                        args[0],
+                        argumentsLog,
+                        user.getAsTag(),
+                        user.getId(),
+                        guild.getName(),
+                        guild.getId(),
+                        tc.getName()
                 );
-                HANDLER.execute(command, msg, arguments);
+                HANDLER.execute(command, msg, (Object[]) arguments);
             } catch (Exception e) {
                 LOGGER.error("Couldn't preform command {}!", args[0], e);
             }
