@@ -29,10 +29,10 @@ import static net.dv8tion.jda.api.interactions.commands.OptionType.USER;
 public class CmdAvatar implements Command {
 
     private final Hinata bot;
-    protected final String optionName = "avatar";
+    protected final String optionName = "user";
 
-    private final CommandData slashInfo = new CommandData(optionName, "Get the avatar of yourself/another person")
-            .addOptions(new OptionData(USER, "user", "the person you want to see it of")
+    private final CommandData slashInfo = new CommandData(this.getDescription().name(), this.getDescription().description())
+            .addOptions(new OptionData(USER, optionName, "the person you want to see it of")
                     .setRequired(false));
 
     public CmdAvatar(Hinata bot) {
@@ -56,6 +56,7 @@ public class CmdAvatar implements Command {
             member = msg.getMember();
         }
 
+        assert member != null;
         tc.sendMessageEmbeds(new EmbedBuilder().setColor(Colors.NORMAL.getCode())
                 .setTitle("Avatar of: " + member.getUser().getAsTag())
                 .setImage(member.getUser().getEffectiveAvatarUrl() + "?size=4096")

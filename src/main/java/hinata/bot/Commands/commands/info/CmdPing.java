@@ -28,9 +28,8 @@ import java.util.Date;
 
 public class CmdPing implements Command {
     private final Hinata bot;
-    protected final String optionName = "user";
 
-    private final CommandData slashInfo = new CommandData(optionName, "Response time of the bot");
+    private final CommandData slashInfo = new CommandData(this.getDescription().name(), this.getDescription().description());
 
     public CmdPing(Hinata bot) {
         this.bot = bot;
@@ -77,6 +76,6 @@ public class CmdPing implements Command {
 
     @Override
     public String getOptionName() {
-        return optionName;
+        return null;
     }
 }

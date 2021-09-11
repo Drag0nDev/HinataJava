@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
+import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -33,7 +34,7 @@ public class CmdPp implements Command {
 
     private final Hinata bot;
     protected final String optionName = "user";
-    private final CommandData slashInfo =  new CommandData("pp", "how long is his pp")
+    private final CommandData slashInfo =  new CommandData(this.getDescription().name(), this.getDescription().description())
             .addOptions(new OptionData(USER, optionName, "the person you want to know it of")
                     .setRequired(false));
 
@@ -89,11 +90,10 @@ public class CmdPp implements Command {
         if (event.getOption(optionName) == null)
             user = member.getUser();
         else
-            user = event.getOption(optionName).getAsUser();
+            user = Objects.requireNonNull(event.getOption(optionName)).getAsUser();
 
         hook.editOriginalEmbeds(embed.build()).queue(message -> {
             StringBuilder desc = new StringBuilder();
-            assert user != null;
             desc.append("**").append(user.getAsTag()).append("**'s pp:\n").append("**").append(getPP()).append("**");
 
             try {

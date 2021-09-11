@@ -37,7 +37,7 @@ public class CmdHelp implements Command {
     private final HashSet<String> categories = new LinkedHashSet<>();
     protected final String optionName = "command";
 
-    private final CommandData slashInfo = new CommandData("help", "A command to show all commands or help for a single command/category!")
+    private final CommandData slashInfo = new CommandData(this.getDescription().name(), this.getDescription().description())
             .addOptions(new OptionData(STRING, optionName, "Comamnd/category to get help with")
                     .setRequired(false));
 
