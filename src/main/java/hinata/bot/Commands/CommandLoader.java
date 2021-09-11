@@ -24,6 +24,8 @@ public class CommandLoader {
                 new CmdBonk(bot),
                 new CmdGetIp(bot),
                 new CmdPp(bot),
+                new CmdHowGay(bot),
+
                 //info commands
                 new CmdAvatar(bot),
                 new CmdHelp(bot),
@@ -45,7 +47,8 @@ public class CommandLoader {
         CommandListUpdateAction cmds = bot.getBot().updateCommands();
 
         COMMANDS.forEach(cmd -> {
-            cmds.addCommands(cmd.slashInfo());
+            if (cmd.slashInfo() != null)
+                cmds.addCommands(cmd.slashInfo());
         });
 
         cmds.queue();
