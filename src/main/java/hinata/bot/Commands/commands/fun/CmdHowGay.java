@@ -60,7 +60,7 @@ public class CmdHowGay implements Command {
             StringBuilder desc = new StringBuilder();
             int gayrate = getGayrate();
 
-            desc.append("**").append(user.getAsTag()).append("** is: ").append("**").append(gayrate).append("**");
+            desc.append("**").append(user.getAsTag()).append("** is: ").append("**").append(gayrate).append("%** gay!");
             embed.setDescription(desc);
 
             if (gayrate > 50)
@@ -100,7 +100,8 @@ public class CmdHowGay implements Command {
             StringBuilder desc = new StringBuilder();
             int gayrate = getGayrate();
 
-            desc.append("**").append(member.getUser().getAsTag()).append("** is: ").append("**").append(gayrate).append("**");
+            assert member != null;
+            desc.append("**").append(member.getUser().getAsTag()).append("** is: ").append("**").append(gayrate).append("%** gay!");
             embed.setDescription(desc);
 
             if (gayrate > 50)
