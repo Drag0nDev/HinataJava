@@ -1,7 +1,9 @@
 package hinata.bot.Commands;
 
+import hinata.bot.Commands.commands.reactions.CmdHug;
 import hinata.bot.Hinata;
 import hinata.bot.util.Listener;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +31,10 @@ public class CommandLoader {
                 //info commands
                 new CmdAvatar(bot),
                 new CmdHelp(bot),
-                new CmdPing(bot)
+                new CmdPing(bot),
+
+                //reaction commands
+                new CmdHug(bot)
         );
 
         LOGGER.info("Loaded {} commands!", COMMANDS.size());
