@@ -9,12 +9,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.requests.GatewayIntent;
-import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
-import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
-import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.jetbrains.annotations.NotNull;
 import org.json.simple.parser.ParseException;
@@ -41,7 +36,7 @@ public class Hinata {
     public Hinata() throws IOException, ParseException {
     }
 
-    public static void main(String[] arguments){
+    public static void main(String[] arguments) {
         try {
             new Hinata().setup();
         } catch (LoginException | IOException | ParseException ex) {
@@ -83,7 +78,7 @@ public class Hinata {
         return CMD_HANDLER;
     }
 
-    public String[] getArguments( @NotNull Message msg) {
+    public String[] getArguments(@NotNull Message msg) {
         //find the used prefix
         String raw = msg.getContentRaw();
         List<String> prefix = this.getConfig().getPrefix();
