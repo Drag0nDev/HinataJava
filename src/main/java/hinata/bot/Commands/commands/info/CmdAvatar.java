@@ -11,6 +11,8 @@ import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
+import java.util.Objects;
+
 import static net.dv8tion.jda.api.interactions.commands.OptionType.USER;
 
 @CommandDescription(
@@ -65,9 +67,12 @@ public class CmdAvatar implements Command {
 
     @Override
     public void run(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) {
+        User user = event.getOption(this.optionName) != null ?
+                Objects.requireNonNull(event.getOption(this.optionName)).getAsUser() :
+                member.getUser();
         hook.sendMessageEmbeds(new EmbedBuilder().setColor(Colors.NORMAL.getCode())
-                .setTitle("Avatar of: " + member.getUser().getAsTag())
-                .setImage(member.getUser().getEffectiveAvatarUrl() + "?size=4096")
+                .setTitle("Avatar of: " + user.getAsTag())
+                .setImage(user.getEffectiveAvatarUrl() + "?size=4096")
                 .build()).queue();
     }
 
