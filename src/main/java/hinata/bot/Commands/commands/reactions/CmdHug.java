@@ -4,8 +4,8 @@ import com.github.rainestormee.jdacommand.CommandAttribute;
 import com.github.rainestormee.jdacommand.CommandDescription;
 import hinata.bot.Commands.Command;
 import hinata.bot.Hinata;
-import hinata.bot.constants.ApiCalls;
 import hinata.bot.constants.Colors;
+import hinata.bot.constants.Reactions;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -18,7 +18,6 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.time.ZonedDateTime;
-import java.util.Collection;
 import java.util.Objects;
 
 import static net.dv8tion.jda.api.interactions.commands.OptionType.USER;
@@ -53,7 +52,7 @@ public class CmdHug implements Command {
         String text;
         EmbedBuilder embed = new EmbedBuilder()
                 .setColor(Colors.NORMAL.getCode())
-                .setImage(ApiCalls.HUG.get())
+                .setImage(Reactions.HUG.get())
                 .setFooter("Powered by nekos.life")
                 .setTimestamp(ZonedDateTime.now());
 
@@ -61,14 +60,19 @@ public class CmdHug implements Command {
             String executor = member.getNickname() != null ?
                     member.getNickname() :
                     member.getUser().getName();
-            text = Objects.requireNonNull(event.getOption(this.optionName)).getAsUser().getAsTag() + " you have been hugged by **" + executor + "**!";
+            Member target = Objects.requireNonNull(event.getOption(this.optionName)).getAsMember();
+
+            if (member != target) {
+                text = Objects.requireNonNull(target).getAsMention() + " you have been hugged by **" + executor + "**!";
+            } else {
+                text = "*Hugs* " + member.getAsMention();
+            }
         } else {
             text = "*Hugs* " + member.getAsMention();
         }
 
         MessageBuilder message = new MessageBuilder().setContent(text)
-                .setEmbeds(embed.build())
-                .allowMentions(Message.MentionType.USER);
+                .setEmbeds(embed.build());
 
         hook.sendMessage(message.build()).queue();
     }
@@ -84,7 +88,7 @@ public class CmdHug implements Command {
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setColor(Colors.NORMAL.getCode())
-                .setImage(ApiCalls.HUG.get())
+                .setImage(Reactions.HUG.get())
                 .setFooter("Powered by nekos.life")
                 .setTimestamp(ZonedDateTime.now());
 
@@ -92,7 +96,7 @@ public class CmdHug implements Command {
             if (!msg.getMentionedMembers().isEmpty()) {
                 member = msg.getMentionedMembers(guild).get(0);
             } else {
-                member = guild.getMemberById(arguments[0]);
+                member = guild.retrieveMemberById(arguments[0]).complete();
             }
 
             assert executor != null;
@@ -101,7 +105,12 @@ public class CmdHug implements Command {
             String executorName = executor.getNickname() != null ?
                     executor.getNickname() :
                     executor.getUser().getName();
-            text = member.getAsMention() + " you have been hugged by **" + executorName + "**!";
+
+            if (member != executor) {
+                text = Objects.requireNonNull(member).getAsMention() + " you have been hugged by **" + executorName + "**!";
+            } else {
+                text = "*Hugs* " + member.getAsMention();
+            }
         } else {
             member = executor;
 
@@ -112,7 +121,11 @@ public class CmdHug implements Command {
 
         MessageBuilder message = new MessageBuilder().setContent(text)
                 .setEmbeds(embed.build())
-                .allowMentions(Message.MentionType.USER);
+                .denyMentions(
+                        Message.MentionType.ROLE,
+                        Message.MentionType.EVERYONE,
+                        Message.MentionType.HERE
+                );
 
         tc.sendMessage(message.build()).queue();
     }
