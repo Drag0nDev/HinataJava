@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.jetbrains.annotations.NotNull;
 import org.json.simple.parser.ParseException;
@@ -50,13 +51,17 @@ public class Hinata {
         bot = JDABuilder
                 .createDefault(config.getToken())
                 .disableIntents(GatewayIntent.GUILD_VOICE_STATES)
-                .enableIntents(GatewayIntent.GUILD_MEMBERS)
+                .enableIntents(
+                        GatewayIntent.GUILD_MEMBERS,
+                        GatewayIntent.GUILD_BANS
+                )
                 .disableCache(CacheFlag.VOICE_STATE)
                 .addEventListeners(
                         new CommandListener(this, CMD_HANDLER),
                         new Listener(this)
                 )
                 .setActivity(Activity.playing("on a mission with Naruto"))
+                .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .build();
 
         commandLoader.loadSlashCommands(this);
