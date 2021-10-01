@@ -46,6 +46,7 @@ public class CmdHelp implements Command {
 
         categories.add("fun");
         categories.add("info");
+        categories.add("reactions");
     }
 
     @Override

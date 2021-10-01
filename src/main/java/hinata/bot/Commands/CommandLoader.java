@@ -1,19 +1,19 @@
 package hinata.bot.Commands;
 
-import hinata.bot.Commands.commands.reactions.CmdHug;
 import hinata.bot.Hinata;
 import hinata.bot.util.Listener;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import hinata.bot.Commands.commands.fun.*;
-import hinata.bot.Commands.commands.info.*;
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+
+//import commands
+import hinata.bot.Commands.commands.fun.*;
+import hinata.bot.Commands.commands.info.*;
+import hinata.bot.Commands.commands.reactions.*;
 
 public class CommandLoader {
     private final Set<Command> COMMANDS = new HashSet<>();
@@ -34,7 +34,9 @@ public class CommandLoader {
                 new CmdPing(bot),
 
                 //reaction commands
-                new CmdHug(bot)
+                new CmdBaka(bot),
+                new CmdHug(bot),
+                new CmdKiss(bot)
         );
 
         LOGGER.info("Loaded {} commands!", COMMANDS.size());
