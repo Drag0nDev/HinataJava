@@ -19,10 +19,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.concurrent.*;
+import java.util.regex.*;
 
 public class CommandListener extends ListenerAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(Listener.class);

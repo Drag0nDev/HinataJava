@@ -4,14 +4,10 @@ import com.github.rainestormee.jdacommand.CommandAttribute;
 import com.github.rainestormee.jdacommand.CommandDescription;
 import hinata.bot.Commands.Command;
 import hinata.bot.Hinata;
-import hinata.bot.constants.Colors;
-import hinata.bot.constants.Reactions;
+import hinata.bot.constants.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
@@ -50,7 +46,7 @@ public class CmdKiss implements Command {
         String text;
         EmbedBuilder embed = new EmbedBuilder()
                 .setColor(Colors.NORMAL.getCode())
-                .setImage(Reactions.KISS.get())
+                .setImage(ApiCalls.KISS.get())
                 .setFooter("Powered by nekos.life")
                 .setTimestamp(ZonedDateTime.now());
 
@@ -86,7 +82,7 @@ public class CmdKiss implements Command {
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setColor(Colors.NORMAL.getCode())
-                .setImage(Reactions.KISS.get())
+                .setImage(ApiCalls.KISS.get())
                 .setFooter("Powered by nekos.life")
                 .setTimestamp(ZonedDateTime.now());
 
