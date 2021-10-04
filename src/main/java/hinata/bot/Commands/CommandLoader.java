@@ -25,8 +25,8 @@ public class CommandLoader {
                 //fun commands
                 new CmdBonk(bot),
                 new CmdGetIp(bot),
-                new CmdPp(bot),
                 new CmdHowGay(bot),
+                new CmdPp(bot),
 
                 //info commands
                 new CmdAvatar(bot),
@@ -35,8 +35,16 @@ public class CommandLoader {
 
                 //reaction commands
                 new CmdBaka(bot),
+                new CmdBlush(bot),
+                new CmdCry(bot),
+                new CmdCuddle(bot),
+                new CmdGrope(bot),
                 new CmdHug(bot),
-                new CmdKiss(bot)
+                new CmdKiss(bot),
+                new CmdPat(bot),
+                new CmdPoke(bot),
+                new CmdSlap(bot),
+                new CmdSpank(bot)
         );
 
         LOGGER.info("Loaded {} commands!", COMMANDS.size());
