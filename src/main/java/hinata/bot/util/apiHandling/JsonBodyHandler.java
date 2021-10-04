@@ -1,4 +1,4 @@
-package hinata.bot.util;
+package hinata.bot.util.apiHandling;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
