@@ -1,5 +1,6 @@
 package hinata.bot.Commands;
 
+import hinata.bot.Commands.commands.channels.*;
 import hinata.bot.Hinata;
 import hinata.bot.util.Listener;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
@@ -22,6 +23,13 @@ public class CommandLoader {
 
     public CommandLoader(Hinata bot) {
         loadCommands(
+                //channel commands
+                new CmdCreateCategory(bot),
+                new CmdCreateChannel(bot),
+                new CmdCreateVoice(bot),
+                new CmdDeleteChannel(bot),
+                new CmdSetNSFW(bot),
+
                 //fun commands
                 new CmdBonk(bot),
                 new CmdGetIp(bot),
