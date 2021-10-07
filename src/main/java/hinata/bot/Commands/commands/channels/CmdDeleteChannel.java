@@ -32,7 +32,7 @@ import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
 public class CmdDeleteChannel implements Command {
 
     private final Hinata bot;
-    protected final String optionName = "name";
+    protected final String optionName = "channel_id";
     ArrayList<Permission> permissions = new ArrayList<>();
 
     private final CommandData slashInfo = new CommandData(this.getDescription().name(), this.getDescription().description())
@@ -46,9 +46,21 @@ public class CmdDeleteChannel implements Command {
 
     @Override
     public void run(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) {
-        long channelId = Long.parseLong(Objects.requireNonNull(event.getOption(this.optionName)).getAsString());
+        String channelIdString = Objects.requireNonNull(event.getOption(this.optionName)).getAsString();
         EmbedBuilder embed = new EmbedBuilder();
 
+        //check if it is an actual numbers only string
+        if(!channelIdString.matches("\\d*")){
+            embed.setColor(Colors.ERROR.getCode())
+                    .setTitle(this.getDescription().name())
+                    .setDescription("Please provide a valid channel ID")
+                    .setTimestamp(ZonedDateTime.now());
+
+            hook.sendMessageEmbeds(embed.build()).queue();
+            return;
+        }
+
+        long channelId = Long.parseLong(Objects.requireNonNull(event.getOption(this.optionName)).getAsString());
         if (guild.getGuildChannelById(channelId) == null){
             embed.setColor(Colors.ERROR.getCode())
                     .setTitle(this.getDescription().name())
@@ -76,8 +88,20 @@ public class CmdDeleteChannel implements Command {
         Guild guild = msg.getGuild();
         TextChannel tc = msg.getTextChannel();
         String[] arguments = bot.getArguments(msg);
-        long channelId = Long.parseLong(arguments[0]);
         EmbedBuilder embed = new EmbedBuilder();
+
+        //check if it is an actual numbers only string
+        if(!arguments[0].matches("\\d*")){
+            embed.setColor(Colors.ERROR.getCode())
+                    .setTitle(this.getDescription().name())
+                    .setDescription("Please provide a valid channel ID")
+                    .setTimestamp(ZonedDateTime.now());
+
+            tc.sendMessageEmbeds(embed.build()).queue();
+            return;
+        }
+
+        long channelId = Long.parseLong(arguments[0]);
 
         if (guild.getGuildChannelById(channelId) == null){
             embed.setColor(Colors.ERROR.getCode())

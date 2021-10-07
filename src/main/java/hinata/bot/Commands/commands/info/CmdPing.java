@@ -74,9 +74,4 @@ public class CmdPing implements Command {
     public CommandData slashInfo() {
         return slashInfo;
     }
-
-    @Override
-    public String getOptionName() {
-        return null;
-    }
 }

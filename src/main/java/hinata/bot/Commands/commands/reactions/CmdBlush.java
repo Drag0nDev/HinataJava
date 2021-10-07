@@ -77,9 +77,4 @@ public class CmdBlush implements Command {
     public CommandData slashInfo() {
         return this.slashInfo;
     }
-
-    @Override
-    public String getOptionName() {
-        return null;
-    }
 }

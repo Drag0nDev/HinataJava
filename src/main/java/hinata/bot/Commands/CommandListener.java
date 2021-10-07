@@ -106,7 +106,7 @@ public class CommandListener extends ListenerAdapter {
 
                 command.executeSlash(event);
             } catch (Exception e) {
-                sendError(null, event);
+                sendError(event);
                 LOGGER.error("Couldn't preform command {}!", event.getName(), e);
             }
         });
@@ -213,7 +213,7 @@ public class CommandListener extends ListenerAdapter {
 
                 HANDLER.execute(command, msg, (Object[]) arguments);
             } catch (Exception e) {
-                sendError(tc, null);
+                sendError(tc);
                 LOGGER.info("Couldn't preform command {}!", command.getDescription().name(), e);
             }
         });
@@ -233,7 +233,7 @@ public class CommandListener extends ListenerAdapter {
         return false;
     }
 
-    private void sendError(TextChannel tc, SlashCommandEvent event) {
+    private void sendError(SlashCommandEvent event) {
         String inviteLink;
         Optional<Invite> invite;
         Guild support = bot.getBot().getGuildById("645047329141030936");
@@ -256,11 +256,37 @@ public class CommandListener extends ListenerAdapter {
                         "Please report this to the bot developer in the **[support server](" + inviteLink + ")**")
                 .setTimestamp(ZonedDateTime.now());
 
-        if (tc != null) {
-            tc.sendMessageEmbeds(embed.build()).queue();
-        } else {
-            event.getHook().sendMessageEmbeds(embed.build()).queue();
+
+        event.getHook().sendMessageEmbeds(embed.build()).queue();
+
+    }
+
+    private void sendError(TextChannel tc) {
+        String inviteLink;
+        Optional<Invite> invite;
+        Guild support = bot.getBot().getGuildById("645047329141030936");
+        List<Invite> invites = Objects.requireNonNull(support).retrieveInvites().complete();
+
+
+        invite = invites.stream().findFirst();
+        if (invite.isPresent())
+            inviteLink = invite.get().getUrl();
+        else {
+            Invite base = Objects.requireNonNull(support.getDefaultChannel())
+                    .createInvite()
+                    .complete();
+            inviteLink = base.getUrl();
         }
+
+        EmbedBuilder embed = new EmbedBuilder().setColor(Colors.ERROR.getCode())
+                .setTitle("An error occurred")
+                .setDescription("An error occurred and the command stopped executing.\n" +
+                        "Please report this to the bot developer in the **[support server](" + inviteLink + ")**")
+                .setTimestamp(ZonedDateTime.now());
+
+        
+        tc.sendMessageEmbeds(embed.build()).queue();
+
     }
 
     private void sendNoPermissionError(InteractionHook hook, Member member, Member self, Permission permission) {
