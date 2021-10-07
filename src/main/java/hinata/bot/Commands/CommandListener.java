@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,13 +41,13 @@ public class CommandListener extends ListenerAdapter {
 
     @Override
     public void onSlashCommand(SlashCommandEvent event) {
+        event.deferReply().queue();
         if (event.getGuild() == null)
             return;
 
         CMD_EXECUTOR.execute(() -> {
             Guild guild = event.getGuild();
-            User user = event.getUser();
-
+            Member member = guild.retrieveMemberById(event.getUser().getId()).complete();
             MessageChannel tc = event.getChannel();
             Member self = guild.getSelfMember();
 
@@ -58,7 +59,7 @@ public class CommandListener extends ListenerAdapter {
             if (!self.hasPermission((GuildChannel) tc, Permission.MESSAGE_WRITE))
                 return;
 
-            if (command.getAttribute("category").equals("owner") && !user.getId().equals(bot.getConfig().getOwner()))
+            if (command.getAttribute("category").equals("owner") && !member.getId().equals(bot.getConfig().getOwner()))
                 return;
 
             String args;
@@ -80,13 +81,30 @@ public class CommandListener extends ListenerAdapter {
                                 "Channel: '{}'",
                         event.getName(),
                         args,
-                        user.getAsTag(),
-                        user.getId(),
+                        member.getUser().getAsTag(),
+                        member.getId(),
                         guild.getName(),
                         guild.getId(),
                         tc.getName()
                 );
-                command.executeSlash(bot, event);
+
+                if (command.getNeededPermissions() != null) {
+                    for (Permission permission : command.getNeededPermissions()) {
+                        //check member permissions
+                        if (!member.hasPermission(permission)) {
+                            sendNoPermissionError(event.getHook(), member, self, permission);
+                            return;
+                        }
+
+                        //check bot permissions
+                        if (!self.hasPermission(permission)) {
+                            sendNoPermissionError(event.getHook(), self, self, permission);
+                            return;
+                        }
+                    }
+                }
+
+                command.executeSlash(event);
             } catch (Exception e) {
                 sendError(null, event);
                 LOGGER.error("Couldn't preform command {}!", event.getName(), e);
@@ -102,9 +120,9 @@ public class CommandListener extends ListenerAdapter {
 
             Message msg = event.getMessage();
             Guild guild = event.getGuild();
-            User user = event.getAuthor();
+            Member member = event.getMember();
 
-            if (user.isBot() || event.isWebhookMessage())
+            if (member.getUser().isBot() || event.isWebhookMessage())
                 return;
 
             if (event.getChannel().isNews())
@@ -146,7 +164,7 @@ public class CommandListener extends ListenerAdapter {
             if (!self.hasPermission(tc, Permission.MESSAGE_WRITE))
                 return;
 
-            if (command.getAttribute("category").equals("owner") && !user.getId().equals(bot.getConfig().getOwner()))
+            if (command.getAttribute("category").equals("owner") && !member.getId().equals(bot.getConfig().getOwner()))
                 return;
 
             try {
@@ -168,14 +186,31 @@ public class CommandListener extends ListenerAdapter {
                                 "Server: '{}'\n" +
                                 "Server ID: '{}'\n" +
                                 "Channel: '{}'",
-                        args[0],
+                        command.getDescription().name(),
                         argumentsLog,
-                        user.getAsTag(),
-                        user.getId(),
+                        member.getUser().getAsTag(),
+                        member.getId(),
                         guild.getName(),
                         guild.getId(),
                         tc.getName()
                 );
+
+                if (command.getNeededPermissions() != null) {
+                    for (Permission permission : command.getNeededPermissions()) {
+                        //check member permissions
+                        if (!member.hasPermission(permission)) {
+                            sendNoPermissionError(tc, member, self, permission);
+                            return;
+                        }
+
+                        //check bot permissions
+                        if (!self.hasPermission(permission)) {
+                            sendNoPermissionError(tc, self, self, permission);
+                            return;
+                        }
+                    }
+                }
+
                 HANDLER.execute(command, msg, (Object[]) arguments);
             } catch (Exception e) {
                 sendError(tc, null);
@@ -226,5 +261,45 @@ public class CommandListener extends ListenerAdapter {
         } else {
             event.getHook().sendMessageEmbeds(embed.build()).queue();
         }
+    }
+
+    private void sendNoPermissionError(InteractionHook hook, Member member, Member self, Permission permission) {
+        EmbedBuilder embed = new EmbedBuilder().setColor(Colors.ERROR.getCode())
+                .setTitle("No Permission")
+                .setTimestamp(ZonedDateTime.now());
+
+        if (member == self) {
+            embed.setDescription(
+                    "I don't have the required permission to run this command\n" +
+                            "**Missing permission:** " + permission.getName()
+            );
+        } else {
+            embed.setDescription(
+                    "You don't have the required permission to run this command\n" +
+                            "**Missing permission:** " + permission.getName()
+            );
+        }
+
+        hook.sendMessageEmbeds(embed.build()).queue();
+    }
+
+    private void sendNoPermissionError(TextChannel tc, Member member, Member self, Permission permission) {
+        EmbedBuilder embed = new EmbedBuilder().setColor(Colors.ERROR.getCode())
+                .setTitle("No Permission")
+                .setTimestamp(ZonedDateTime.now());
+
+        if (member == self) {
+            embed.setDescription(
+                    "I don't have the required permission to run this command\n" +
+                            "**Missing permission:** " + permission.getName()
+            );
+        } else {
+            embed.setDescription(
+                    "You don't have the required permission to run this command\n" +
+                            "**Missing permission:** " + permission.getName()
+            );
+        }
+
+        tc.sendMessageEmbeds(embed.build()).queue();
     }
 }

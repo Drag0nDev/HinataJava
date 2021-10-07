@@ -44,6 +44,7 @@ public class CmdHelp implements Command {
     public CmdHelp(Hinata bot) {
         this.bot = bot;
 
+        categories.add("channel");
         categories.add("fun");
         categories.add("info");
         categories.add("reactions");
@@ -98,7 +99,7 @@ public class CmdHelp implements Command {
     public void run(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) {
 
         Map<String, ArrayList<String>> cmdMap = new HashMap<>();
-        String input = event.getOption(optionName) == null ? "" : event.getOption(optionName).getAsString();
+        String input = event.getOption(optionName) == null ? "" : Objects.requireNonNull(event.getOption(optionName)).getAsString();
 
         //map the categories and their commands
         for (String cat : categories) {

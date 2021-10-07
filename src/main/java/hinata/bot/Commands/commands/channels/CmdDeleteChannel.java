@@ -13,7 +13,6 @@ import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
-import java.nio.channels.Channel;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Objects;
