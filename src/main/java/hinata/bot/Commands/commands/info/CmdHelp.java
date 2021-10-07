@@ -5,6 +5,7 @@ import com.github.rainestormee.jdacommand.*;
 import hinata.bot.Commands.Command;
 import hinata.bot.Hinata;
 import hinata.bot.constants.Colors;
+import hinata.bot.util.AsciiTable;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
@@ -157,10 +158,8 @@ public class CmdHelp implements Command {
                 .setFooter("Syntax: [] = required, <> = optional")
                 .setTimestamp(ZonedDateTime.now());
 
-        if (cmd.getAttribute("permissions") != null) {
-            embed.addField("User permissions:", checkPermissions(member, cmd), false)
-                    .addField("Bot permissions:", checkPermissions(self, cmd), true);
-        }
+        if (cmd.getNeededPermissions() != null)
+            embed.addField("Permissions:", checkPermissions(member, self, cmd), false);
 
         return embed.build();
     }
@@ -218,19 +217,43 @@ public class CmdHelp implements Command {
         return cmd.getDescription() != null || cmd.hasAttribute("description");
     }
 
-    private String checkPermissions(Member member, Command cmd) {
-        String[] permissions = cmd.getAttribute("permissions").trim().split(",\\s");
+    private String checkPermissions(Member member, Member self, Command cmd) {
         StringBuilder permissionsCheck = new StringBuilder();
+        AsciiTable table = new AsciiTable();
+        table.setMaxColumnWidth(50);
+        table.getColumns().add(new AsciiTable.Column("Permission"));
+        table.getColumns().add(new AsciiTable.Column("Bot"));
+        table.getColumns().add(new AsciiTable.Column("User"));
 
-        for (String permission : permissions) {
-            if (member.hasPermission(Permission.valueOf(permission.toUpperCase()))) {
-                permissionsCheck.append("**").append(permission.toUpperCase()).append(":** ").append("\u2705").append("\n");
+        for (Permission permission : cmd.getNeededPermissions()) {
+            String botCheck;
+            String memberCheck;
+
+            //check bot
+            if (self.hasPermission(permission)) {
+                botCheck = "✅";
             } else {
-                permissionsCheck.append("**").append(permission.toUpperCase()).append(":** ").append("\u274C").append("\n");
+                botCheck = "❌";
             }
+
+            //check member
+            if (member.hasPermission(permission)) {
+                memberCheck = "✅";
+            } else {
+                memberCheck = "❌";
+            }
+
+            AsciiTable.Row row = new AsciiTable.Row();
+            table.getData().add(row);
+            row.getValues().add(permission.getName());
+            row.getValues().add(botCheck);
+            row.getValues().add(memberCheck);
         }
 
-        return permissionsCheck.toString();
+        table.calculateColumnWidth();
+        System.out.println(table.render());
+
+        return permissionsCheck.append("`").append(table.render()).append("`").toString();
     }
 
     @Override
