@@ -1,7 +1,6 @@
 package hinata.bot.Commands;
 
 import com.github.rainestormee.jdacommand.AbstractCommand;
-import hinata.bot.Hinata;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -24,7 +23,9 @@ public interface Command extends AbstractCommand<Message> {
 
     CommandData slashInfo();
 
-    String getOptionName();
+    default String getOptionName() {
+        return null;
+    }
 
     default ArrayList<Permission> getNeededPermissions(){
         return null;
