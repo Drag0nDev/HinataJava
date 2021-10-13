@@ -3,18 +3,12 @@ package hinata.bot;
 import com.github.rainestormee.jdacommand.CommandHandler;
 import hinata.bot.Commands.CommandListener;
 import hinata.bot.Commands.CommandLoader;
-import hinata.bot.constants.Colors;
-import hinata.bot.constants.CustomReactions;
 import hinata.bot.util.Config;
-import hinata.bot.util.Listener;
-import net.dv8tion.jda.api.EmbedBuilder;
+import hinata.bot.events.Listener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
@@ -25,12 +19,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
-import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static net.dv8tion.jda.api.interactions.commands.OptionType.*;
 
 public class Hinata {
     private final Config config = new Config();
@@ -110,23 +101,5 @@ public class Hinata {
         String[] split = raw.split("\\s+");
 
         return Arrays.copyOfRange(split, 1, split.length);
-    }
-
-    public void sendNSFWWarning(@NotNull TextChannel tc, @NotNull InteractionHook hook){
-        EmbedBuilder embed = new EmbedBuilder()
-                .setDescription("This command can't be executed because this channel " + tc.getAsMention() + " is not marked NSFW")
-                .setColor(Colors.ERROR.getCode())
-                .setTimestamp(ZonedDateTime.now());
-
-        hook.sendMessageEmbeds(embed.build()).queue();
-    }
-
-    public void sendNSFWWarning(@NotNull TextChannel tc) {
-        EmbedBuilder embed = new EmbedBuilder()
-                .setDescription("This command can't be executed because this channel " + tc.getAsMention() + " is not marked NSFW")
-                .setColor(Colors.ERROR.getCode())
-                .setTimestamp(ZonedDateTime.now());
-
-        tc.sendMessageEmbeds(embed.build()).queue();
     }
 }

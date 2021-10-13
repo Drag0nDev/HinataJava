@@ -127,7 +127,7 @@ public class CmdPp implements Command {
     }
 
     @Override
-    public String getOptionName() {
-        return optionName;
+    public String[] getOptionNames() {
+        return new String[]{this.optionName};
     }
 }

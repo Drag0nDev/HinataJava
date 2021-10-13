@@ -54,6 +54,8 @@ public class CmdCry implements Command {
         TextChannel tc = msg.getTextChannel();
         Member executor = msg.getMember();
 
+        assert executor != null;
+
         EmbedBuilder embed = new EmbedBuilder()
                 .setColor(Colors.NORMAL.getCode())
                 .setImage(CustomReactions.cry())

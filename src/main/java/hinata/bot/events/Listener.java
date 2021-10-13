@@ -1,6 +1,7 @@
-package hinata.bot.util;
+package hinata.bot.events;
 
 import hinata.bot.Hinata;
+import hinata.bot.util.Config;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.json.simple.parser.ParseException;
@@ -24,4 +25,5 @@ public class Listener extends ListenerAdapter {
     public void onReady(@Nonnull ReadyEvent event) {
         LOGGER.info("{} is ready", event.getJDA().getSelfUser().getAsTag());
     }
+
 }

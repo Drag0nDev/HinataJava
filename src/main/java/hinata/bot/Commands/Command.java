@@ -23,12 +23,16 @@ public interface Command extends AbstractCommand<Message> {
 
     CommandData slashInfo();
 
-    default String getOptionName() {
+    default String[] getOptionNames() {
         return null;
     }
 
     default ArrayList<Permission> getNeededPermissions(){
         return null;
+    }
+
+    default int getCooldown(){
+        return 0;
     }
 
     void run(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook);

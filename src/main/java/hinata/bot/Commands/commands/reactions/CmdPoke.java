@@ -131,7 +131,7 @@ public class CmdPoke implements Command {
     }
 
     @Override
-    public String getOptionName() {
-        return this.optionName;
+    public String[] getOptionNames() {
+        return new String[]{this.optionName};
     }
 }

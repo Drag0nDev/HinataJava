@@ -29,7 +29,6 @@ import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
                 @CommandAttribute(key = "examples", value = "`h!help`\n" +
                         "`h!help info`\n" +
                         "`h!help slum`"),
-                @CommandAttribute(key = "permissions", value = "ban_members"),
         }
 )
 
@@ -39,7 +38,7 @@ public class CmdHelp implements Command {
     protected final String optionName = "command";
 
     private final CommandData slashInfo = new CommandData(this.getDescription().name(), this.getDescription().description())
-            .addOptions(new OptionData(STRING, optionName, "Comamnd/category to get help with")
+            .addOptions(new OptionData(STRING, optionName, "Command/category to get help with")
                     .setRequired(false));
 
     public CmdHelp(Hinata bot) {
@@ -262,7 +261,7 @@ public class CmdHelp implements Command {
     }
 
     @Override
-    public String getOptionName() {
-        return optionName;
+    public String[] getOptionNames() {
+        return new String[]{this.optionName};
     }
 }

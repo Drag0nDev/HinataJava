@@ -3,7 +3,7 @@ package hinata.bot.Commands;
 import com.github.rainestormee.jdacommand.CommandHandler;
 import hinata.bot.Hinata;
 import hinata.bot.constants.Colors;
-import hinata.bot.util.Listener;
+import hinata.bot.events.Listener;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
@@ -16,10 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.regex.*;
 
@@ -41,6 +38,7 @@ public class CommandListener extends ListenerAdapter {
 
     @Override
     public void onSlashCommand(SlashCommandEvent event) {
+        Calendar now = Calendar.getInstance();
         event.deferReply().queue();
         if (event.getGuild() == null)
             return;
@@ -62,25 +60,19 @@ public class CommandListener extends ListenerAdapter {
             if (command.getAttribute("category").equals("owner") && !member.getId().equals(bot.getConfig().getOwner()))
                 return;
 
-            String args;
+            StringBuilder args = new StringBuilder();
 
-            if (command.getOptionName() == null) {
-                args = "";
+            if (command.getOptionNames() == null) {
+                args = new StringBuilder();
             } else {
-                args = event.getOption(command.getOptionName()) == null ? "" : Objects.requireNonNull(event.getOption(command.getOptionName())).getAsString();
+                for (String option : command.getOptionNames())
+                    args.append(event.getOption(option) == null ? "" : Objects.requireNonNull(event.getOption(option)).getAsString());
             }
 
             try {
-                LOGGER.info("------------------------------\n" +
-                                "Command: '{}'\n" +
-                                "Arguments: '{}'\n" +
-                                "User: '{}'\n" +
-                                "User ID: '{}'\n" +
-                                "Server: '{}'\n" +
-                                "Server ID: '{}'\n" +
-                                "Channel: '{}'",
+                sendLogger(
                         event.getName(),
-                        args,
+                        args.toString(),
                         member.getUser().getAsTag(),
                         member.getId(),
                         guild.getName(),
@@ -114,23 +106,26 @@ public class CommandListener extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
+        Message msg = event.getMessage();
+        Guild guild = event.getGuild();
+        Member member = event.getMember();
+
+        if (member == null || event.isWebhookMessage())
+            return;
+
+        if (!event.getChannel().getType().equals(ChannelType.TEXT))
+            return;
+
+        if (member.getUser().isBot())
+            return;
+
+        if (event.getChannel().isNews())
+            return;
+
+        if (!checkPrefix(msg.getContentRaw()))
+            return;
+
         CMD_EXECUTOR.execute(() -> {
-            if (!event.getChannel().getType().equals(ChannelType.TEXT))
-                return;
-
-            Message msg = event.getMessage();
-            Guild guild = event.getGuild();
-            Member member = event.getMember();
-
-            if (member.getUser().isBot() || event.isWebhookMessage())
-                return;
-
-            if (event.getChannel().isNews())
-                return;
-
-            if (!checkPrefix(msg.getContentRaw()))
-                return;
-
             String raw = msg.getContentRaw();
 
             //find the used prefix
@@ -178,16 +173,9 @@ public class CommandListener extends ListenerAdapter {
                     if (!arg.equals(""))
                         argumentsLog.append(arg).append(" ");
                 }
-                LOGGER.info("------------------------------\n" +
-                                "Command: '{}'\n" +
-                                "Arguments: '{}'\n" +
-                                "User: '{}'\n" +
-                                "User ID: '{}'\n" +
-                                "Server: '{}'\n" +
-                                "Server ID: '{}'\n" +
-                                "Channel: '{}'",
+                sendLogger(
                         command.getDescription().name(),
-                        argumentsLog,
+                        argumentsLog.toString(),
                         member.getUser().getAsTag(),
                         member.getId(),
                         guild.getName(),
@@ -217,6 +205,25 @@ public class CommandListener extends ListenerAdapter {
                 LOGGER.info("Couldn't preform command {}!", command.getDescription().name(), e);
             }
         });
+    }
+
+    private void sendLogger(String cmdName, String args, String executorTag, String executorId, String guildName, String guildId, String tcName) {
+        LOGGER.info("------------------------------\n" +
+                        "Command: '{}'\n" +
+                        "Arguments: '{}'\n" +
+                        "User: '{}'\n" +
+                        "User ID: '{}'\n" +
+                        "Server: '{}'\n" +
+                        "Server ID: '{}'\n" +
+                        "Channel: '{}'",
+                cmdName,
+                args,
+                executorTag,
+                executorId,
+                guildName,
+                guildId,
+                tcName
+        );
     }
 
     private boolean checkPrefix(String message) {
@@ -284,7 +291,7 @@ public class CommandListener extends ListenerAdapter {
                         "Please report this to the bot developer in the **[support server](" + inviteLink + ")**")
                 .setTimestamp(ZonedDateTime.now());
 
-        
+
         tc.sendMessageEmbeds(embed.build()).queue();
 
     }

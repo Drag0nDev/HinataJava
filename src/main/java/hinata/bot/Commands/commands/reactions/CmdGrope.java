@@ -16,6 +16,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 
+import static hinata.bot.util.Utils.sendNSFWWarning;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.USER;
 
 @CommandDescription(
@@ -46,7 +47,7 @@ public class CmdGrope implements Command {
     public void run(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) {
 
         if (!tc.isNSFW()) {
-            bot.sendNSFWWarning(tc, hook);
+            sendNSFWWarning(tc, hook);
             return;
         }
 
@@ -88,7 +89,7 @@ public class CmdGrope implements Command {
         Guild guild = msg.getGuild();
 
         if (!tc.isNSFW()) {
-            bot.sendNSFWWarning(tc);
+            sendNSFWWarning(tc);
             return;
         }
 
@@ -142,7 +143,7 @@ public class CmdGrope implements Command {
     }
 
     @Override
-    public String getOptionName() {
-        return this.optionName;
+    public String[] getOptionNames() {
+        return new String[]{this.optionName};
     }
 }
