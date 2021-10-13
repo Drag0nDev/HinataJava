@@ -45,6 +45,7 @@ public class CmdHelp implements Command {
         this.bot = bot;
 
         categories.add("channel");
+        categories.add("emojis");
         categories.add("fun");
         categories.add("info");
         categories.add("reactions");

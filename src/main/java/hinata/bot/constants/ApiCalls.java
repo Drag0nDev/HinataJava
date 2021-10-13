@@ -7,19 +7,20 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
 
 public enum ApiCalls {
     //SFW api calls
     //gifs
-    BAKA    ("https://nekos.life/api/v2/img/baka",      false),
-    CUDDLE  ("https://nekos.life/api/v2/img/cuddle",    false),
-    HUG     ("https://nekos.life/api/v2/img/hug",       false),
-    KISS    ("https://nekos.life/api/v2/img/kiss",      false),
-    PAT     ("https://nekos.life/api/v2/img/pat",       false),
-    POKE    ("https://nekos.life/api/v2/img/poke",      false),
-    SLAP    ("https://nekos.life/api/v2/img/slap",      false),
+    BAKA        ("https://nekos.life/api/v2/img/baka",      false),
+    CUDDLE      ("https://nekos.life/api/v2/img/cuddle",    false),
+    HUG         ("https://nekos.life/api/v2/img/hug",       false),
+    KISS        ("https://nekos.life/api/v2/img/kiss",      false),
+    PAT         ("https://nekos.life/api/v2/img/pat",       false),
+    POKE        ("https://nekos.life/api/v2/img/poke",      false),
+    SLAP        ("https://nekos.life/api/v2/img/slap",      false),
 
     //images
     KITSUNE     ("https://nekos.life/api/v2/img/fox_girl",  false),
@@ -27,14 +28,14 @@ public enum ApiCalls {
 
     //NSFW api calls
     //gifs
-    SPANK   ("https://nekos.life/api/v2/img/spank",     true),
+    SPANK       ("https://nekos.life/api/v2/img/spank",     true),
 
     //images
-    ERO     ("https://nekos.life/api/v2/img/eron",      true),
-    FUTA    ("https://nekos.life/api/v2/img/futanari",  true),
-    HENTAI  ("https://nekos.life/api/v2/img/hentai",    true),
-    LEWD    ("https://nekos.life/api/v2/img/lewd",      true),
-    TRAP    ("https://nekos.life/api/v2/img/trap",      true)
+    ERO         ("https://nekos.life/api/v2/img/eron",      true),
+    FUTA        ("https://nekos.life/api/v2/img/futanari",  true),
+    HENTAI      ("https://nekos.life/api/v2/img/hentai",    true),
+    LEWD        ("https://nekos.life/api/v2/img/lewd",      true),
+    TRAP        ("https://nekos.life/api/v2/img/trap",      true)
     ;
 
     private final String apiCall;
@@ -50,14 +51,14 @@ public enum ApiCalls {
     }
 
     public String get(){
-        var client = HttpClient.newHttpClient();
+        HttpClient client = HttpClient.newHttpClient();
 
-        var request = HttpRequest.newBuilder(
+        HttpRequest request = HttpRequest.newBuilder(
                         URI.create(this.apiCall))
                 .header("accept", "application/json")
                 .build();
 
-        var responseFuture = client.sendAsync(request, new JsonBodyHandler<>(APOD.class));
+        CompletableFuture<HttpResponse<Supplier<APOD>>> responseFuture = client.sendAsync(request, new JsonBodyHandler<>(APOD.class));
 
         HttpResponse<Supplier<APOD>> response = null;
         try {

@@ -1,8 +1,11 @@
 package hinata.bot.Commands;
 
 import hinata.bot.Commands.commands.channels.*;
+import hinata.bot.Commands.commands.emojis.CmdEmoji;
+import hinata.bot.Commands.commands.emojis.CmdEmojiCreate;
+import hinata.bot.Commands.commands.emojis.CmdEmojiDelete;
 import hinata.bot.Hinata;
-import hinata.bot.util.Listener;
+import hinata.bot.events.Listener;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +32,11 @@ public class CommandLoader {
                 new CmdCreateVoice(bot),
                 new CmdDeleteChannel(bot),
                 new CmdSetNSFW(bot),
+
+                //emojis
+                new CmdEmoji(bot),
+                new CmdEmojiCreate(bot),
+                new CmdEmojiDelete(bot),
 
                 //fun commands
                 new CmdBonk(bot),
