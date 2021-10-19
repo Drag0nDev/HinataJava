@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 public interface Command extends AbstractCommand<Message> {
 
-    void runSlash(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) throws HinataException;
+    default void runSlash(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) throws HinataException {};
 
     @Override
     default void execute(Message object, Object... args){} //This code is useless for Custom error messages
