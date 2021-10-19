@@ -51,7 +51,7 @@ public class CmdEmoji implements Command {
     }
 
     @Override
-    public void run(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) {
+    public void runSlash(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) {
         ArrayList<String> idMatches = new ArrayList<>();
         String input = event.getOption(this.optionName).getAsString();
         EmbedBuilder embed = new EmbedBuilder()

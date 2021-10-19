@@ -87,7 +87,7 @@ public class CmdPp implements Command {
     }
 
     @Override
-    public void run(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) {
+    public void runSlash(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) {
         EmbedBuilder embed = new EmbedBuilder()
                 .setTitle("PP")
                 .setColor(Colors.NORMAL.getCode())

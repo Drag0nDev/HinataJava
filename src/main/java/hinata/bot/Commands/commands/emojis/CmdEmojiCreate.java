@@ -53,7 +53,7 @@ public class CmdEmojiCreate implements Command {
     }
 
     @Override
-    public void run(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) {
+    public void runSlash(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) {
         String name = event.getOption(this.optionName1).getAsString();
         String link = event.getOption(this.optionName2).getAsString();
         EmbedBuilder embed = new EmbedBuilder()

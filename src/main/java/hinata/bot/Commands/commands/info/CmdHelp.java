@@ -17,7 +17,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import java.time.ZonedDateTime;
 import java.util.*;
 
-import static hinata.bot.util.utils.Utils.getSupportInvite;
+import static hinata.bot.util.utils.Utils.generateSupportInvite;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
 
 @CommandDescription(
@@ -98,7 +98,7 @@ public class CmdHelp implements Command {
     }
 
     @Override
-    public void run(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) {
+    public void runSlash(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) {
 
         Map<String, ArrayList<String>> cmdMap = new HashMap<>();
         String input = event.getOption(optionName) == null ? "" : Objects.requireNonNull(event.getOption(optionName)).getAsString();
@@ -168,7 +168,7 @@ public class CmdHelp implements Command {
     private MessageEmbed showHelpMenu(Map<String, ArrayList<String>> cmdMap, String category, User user) {
         if (category == null) {
             //show all commands
-            EmbedBuilder embed = new EmbedBuilder().setTitle("help", getSupportInvite(this.bot))
+            EmbedBuilder embed = new EmbedBuilder().setTitle("help", generateSupportInvite(Hinata.getBot()))
                     .setColor(Colors.NORMAL.getCode())
                     .setTimestamp(ZonedDateTime.now());
 

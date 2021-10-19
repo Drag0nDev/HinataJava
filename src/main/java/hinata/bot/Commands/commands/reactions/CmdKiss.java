@@ -42,7 +42,7 @@ public class CmdKiss implements Command {
     }
 
     @Override
-    public void run(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) {
+    public void runSlash(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) {
         String text;
         EmbedBuilder embed = new EmbedBuilder()
                 .setColor(Colors.NORMAL.getCode())

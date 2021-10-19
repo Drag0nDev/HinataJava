@@ -54,7 +54,7 @@ public class CmdPing implements Command {
     }
 
     @Override
-    public void run(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) {
+    public void runSlash(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) {
         Date now = new Date();
         Date sent = new Date(event.getTimeCreated().toInstant().toEpochMilli());
 

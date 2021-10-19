@@ -21,8 +21,6 @@ import javax.security.auth.login.LoginException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static hinata.bot.util.utils.Utils.getArgs;
 
@@ -31,6 +29,7 @@ public class Hinata {
     private static final Logger logger = LoggerFactory.getLogger(Listener.class);
 
     private static JDA bot = null;
+    private static final String version = "2.0.0";
 
     private final CommandLoader commandLoader = new CommandLoader(this);
     private final CommandHandler<Message> CMD_HANDLER = new CommandHandler<>();
@@ -96,5 +95,9 @@ public class Hinata {
 
     public Hinata getHinata() {
         return this;
+    }
+
+    public String getVersion() {
+        return version;
     }
 }

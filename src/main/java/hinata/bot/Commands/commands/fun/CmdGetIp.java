@@ -44,7 +44,7 @@ public class CmdGetIp implements Command {
     }
 
     @Override
-    public void run(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) {
+    public void runSlash(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) {
         EmbedBuilder embed = new EmbedBuilder()
                 .setTitle("getip")
                 .setImage("https://media1.tenor.com/images/b7cd57136bb82a1784bedc5408149eb1/tenor.gif?itemid=13247943")

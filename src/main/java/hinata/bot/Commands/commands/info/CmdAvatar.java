@@ -67,7 +67,7 @@ public class CmdAvatar implements Command {
     }
 
     @Override
-    public void run(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) {
+    public void runSlash(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) {
         User user = event.getOption(this.optionName) != null ?
                 Objects.requireNonNull(event.getOption(this.optionName)).getAsUser() :
                 member.getUser();

@@ -45,7 +45,7 @@ public class CmdSetNSFW implements Command {
     }
 
     @Override
-    public void run(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) {
+    public void runSlash(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) {
         MessageChannel mc = Objects.requireNonNull(event.getOption(this.optionName)).getAsMessageChannel();
         EmbedBuilder embed = new EmbedBuilder();
         TextChannel channel = Objects.requireNonNull(guild.getTextChannelById(mc.getId()));

@@ -6,6 +6,7 @@ import hinata.bot.constants.Colors;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import org.jetbrains.annotations.NotNull;
@@ -22,6 +23,23 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Utils {
+    public static @NotNull String getArgs(String raw, List<String> prefix) {
+        String usedPrefix = "";
+        int i = 0;
+
+        while (usedPrefix.equals("")) {
+            String toFind = "^" + prefix.get(i);
+            Pattern pattern = Pattern.compile(toFind, Pattern.CASE_INSENSITIVE);
+            Matcher matcher = pattern.matcher(raw);
+            boolean matchFound = matcher.find();
+            if (matchFound) usedPrefix = prefix.get(i);
+            i++;
+        }
+
+        raw = raw.replaceFirst(Pattern.quote(usedPrefix), "");
+        return raw;
+    }
+
     public static @NotNull Message jsonToMessage(@NotNull JsonObject json) {
         MessageBuilder messageBuilder = new MessageBuilder();
         EmbedBuilder embedBuilder = new EmbedBuilder();
@@ -176,6 +194,7 @@ public class Utils {
 
         return embedBuilder.build();
     }
+
     public static void sendNSFWWarning(@NotNull TextChannel tc, @NotNull InteractionHook hook){
         EmbedBuilder embed = new EmbedBuilder()
                 .setDescription("This command can't be executed because this channel " + tc.getAsMention() + " is not marked NSFW")
@@ -192,23 +211,8 @@ public class Utils {
 
         tc.sendMessageEmbeds(embed.build()).queue();
     }
-    public static @NotNull String getSupportInvite(@NotNull Hinata bot) {
-        Optional<Invite> invite;
-        Guild support = bot.getBot().getGuildById("645047329141030936");
-        List<Invite> invites = Objects.requireNonNull(support).retrieveInvites().complete();
 
-
-        invite = invites.stream().findFirst();
-        if (invite.isPresent())
-            return invite.get().getUrl();
-        else {
-            Invite base = Objects.requireNonNull(support.getDefaultChannel())
-                    .createInvite()
-                    .complete();
-            return base.getUrl();
-        }
-    }
-    public static @NotNull String getSupportInvite(@NotNull JDA bot) {
+    public static @NotNull String generateSupportInvite(@NotNull JDA bot) {
         Optional<Invite> invite;
         Guild support = bot.getGuildById("645047329141030936");
         List<Invite> invites = Objects.requireNonNull(support).retrieveInvites().complete();
@@ -224,6 +228,23 @@ public class Utils {
             return base.getUrl();
         }
     }
+    public static @NotNull String generateInvite() {
+        return Hinata.getBot().getInviteUrl(
+                //for everything and smooth operations
+                Permission.ADMINISTRATOR,
+                //when the person cant give the admin permission or they dont want the bot to have it
+                Permission.KICK_MEMBERS, Permission.BAN_MEMBERS, Permission.VOICE_MUTE_OTHERS,
+                Permission.MANAGE_CHANNEL, Permission.MANAGE_SERVER,
+                Permission.MESSAGE_ADD_REACTION,
+                Permission.VIEW_AUDIT_LOGS, Permission.VIEW_CHANNEL,
+                Permission.MESSAGE_WRITE, Permission.MESSAGE_MANAGE, Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_ATTACH_FILES,
+                Permission.MESSAGE_HISTORY, Permission.MESSAGE_EXT_EMOJI,
+                Permission.VOICE_USE_VAD,
+                Permission.NICKNAME_CHANGE,
+                Permission.NICKNAME_MANAGE, Permission.MANAGE_ROLES, Permission.MANAGE_WEBHOOKS, Permission.MANAGE_EMOTES
+        );
+    }
+
     public static int getBots(@NotNull Guild guild) {
         AtomicInteger amount = new AtomicInteger();
         List<Member> members = guild.loadMembers().get();
@@ -235,9 +256,11 @@ public class Utils {
 
         return amount.get();
     }
+
     public static @NotNull DateTimeFormatter format() {
         return new DateTimeFormatterBuilder().appendPattern("dd-M-yyyy hh:mm:ss a").toFormatter();
     }
+
     public static int getChannelAmount(@NotNull List<GuildChannel> channels, ChannelType sort){
         AtomicInteger amount = new AtomicInteger();
 
@@ -260,22 +283,6 @@ public class Utils {
             return "-";
 
         return guild.getAfkChannel().getName();
-    }
-    public static @NotNull String getArgs(String raw, List<String> prefix) {
-        String usedPrefix = "";
-        int i = 0;
-
-        while (usedPrefix.equals("")) {
-            String toFind = "^" + prefix.get(i);
-            Pattern pattern = Pattern.compile(toFind, Pattern.CASE_INSENSITIVE);
-            Matcher matcher = pattern.matcher(raw);
-            boolean matchFound = matcher.find();
-            if (matchFound) usedPrefix = prefix.get(i);
-            i++;
-        }
-
-        raw = raw.replaceFirst(Pattern.quote(usedPrefix), "");
-        return raw;
     }
 
     private static JsonObject stringToJsonEmbed(String str) {

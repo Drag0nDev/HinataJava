@@ -45,7 +45,7 @@ public class CmdEmojiDelete implements Command {
     }
 
     @Override
-    public void run(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) {
+    public void runSlash(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) {
         String name = event.getOption(optionName).getAsString();
         EmbedBuilder embed = new EmbedBuilder()
                 .setTitle("Emoji delete")

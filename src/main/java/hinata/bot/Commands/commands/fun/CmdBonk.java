@@ -42,7 +42,7 @@ public class CmdBonk implements Command {
     }
 
     @Override
-    public void run(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) {
+    public void runSlash(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) {
         StringBuilder desc = new StringBuilder();
         EmbedBuilder embed = new EmbedBuilder()
                 .setTitle("Bonk")

@@ -44,7 +44,7 @@ public class CmdHowGay implements Command {
     }
 
     @Override
-    public void run(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) {
+    public void runSlash(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) {
         EmbedBuilder embed = new EmbedBuilder().setTitle("howgay")
                 .setColor(Colors.NORMAL.getCode())
                 .setDescription("Calculating!");

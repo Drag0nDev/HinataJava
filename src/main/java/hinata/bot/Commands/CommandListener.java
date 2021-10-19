@@ -22,7 +22,7 @@ import java.util.concurrent.*;
 import java.util.regex.*;
 
 import static hinata.bot.util.utils.Utils.getArgs;
-import static hinata.bot.util.utils.Utils.getSupportInvite;
+import static hinata.bot.util.utils.Utils.generateSupportInvite;
 
 public class CommandListener extends ListenerAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(Listener.class);
@@ -101,7 +101,7 @@ public class CommandListener extends ListenerAdapter {
                     }
                 }
 
-                command.executeSlash(event);
+                command.runSlash(event.getGuild(), event.getTextChannel(), event.getMember(), event, event.getHook());
             } catch (HinataException message) {
                 sendCustomError(event.getHook(), message);
             } catch (Exception e) {
@@ -241,7 +241,7 @@ public class CommandListener extends ListenerAdapter {
     }
 
     private void sendError(@NotNull SlashCommandEvent event) {
-        String inviteLink = getSupportInvite(this.bot);
+        String inviteLink = generateSupportInvite(Hinata.getBot());
 
         EmbedBuilder embed = new EmbedBuilder().setColor(Colors.ERROR.getCode())
                 .setTitle("An error occurred")
@@ -255,7 +255,7 @@ public class CommandListener extends ListenerAdapter {
     }
 
     private void sendError(@NotNull TextChannel tc) {
-        String inviteLink = getSupportInvite(this.bot);
+        String inviteLink = generateSupportInvite(Hinata.getBot());
 
         EmbedBuilder embed = new EmbedBuilder().setColor(Colors.ERROR.getCode())
                 .setTitle("An error occurred")
