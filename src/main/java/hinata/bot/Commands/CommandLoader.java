@@ -4,6 +4,8 @@ import hinata.bot.Commands.commands.channels.*;
 import hinata.bot.Commands.commands.emojis.CmdEmoji;
 import hinata.bot.Commands.commands.emojis.CmdEmojiCreate;
 import hinata.bot.Commands.commands.emojis.CmdEmojiDelete;
+import hinata.bot.Commands.commands.owner.CmdShutdown;
+import hinata.bot.Commands.commands.owner.CmdTest;
 import hinata.bot.Hinata;
 import hinata.bot.events.Listener;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
@@ -43,11 +45,21 @@ public class CommandLoader {
                 new CmdGetIp(bot),
                 new CmdHowGay(bot),
                 new CmdPp(bot),
+                new CmdSimprate(bot),
 
                 //info commands
+                new CmdAccountAge(bot),
                 new CmdAvatar(bot),
                 new CmdHelp(bot),
+                new CmdInvite(bot),
                 new CmdPing(bot),
+                new CmdServerIcon(bot),
+                new CmdServerInfo(bot),
+                new CmdStats(bot),
+
+                //owner commands
+                new CmdShutdown(bot),
+                new CmdTest(bot),
 
                 //reaction commands
                 new CmdBaka(bot),
