@@ -61,12 +61,10 @@ public class CmdBonk implements Command {
     }
 
     @Override
-    public void execute(Message msg, Object... args) {
+    public void runCommand(Message msg, Guild guild, TextChannel tc, Member member) {
         EmbedBuilder embed = new EmbedBuilder()
                 .setTitle("Bonk")
                 .setColor(Colors.NORMAL.getCode());
-        Member member;
-        Guild guild = msg.getGuild();
         MessageChannel mc = msg.getChannel();
         String[] arguments = bot.getArguments(msg);
         StringBuilder desc = new StringBuilder();

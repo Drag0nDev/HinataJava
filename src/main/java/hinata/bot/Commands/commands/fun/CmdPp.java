@@ -43,13 +43,11 @@ public class CmdPp implements Command {
     }
 
     @Override
-    public void execute(Message msg, Object... args) {
+    public void runCommand(Message msg, Guild guild, TextChannel tc, Member member) {
         EmbedBuilder embed = new EmbedBuilder()
                 .setTitle("PP")
                 .setColor(Colors.NORMAL.getCode())
                 .setDescription("Looking");
-        Member member;
-        Guild guild = msg.getGuild();
         MessageChannel mc = msg.getChannel();
         String[] arguments = bot.getArguments(msg);
 
@@ -72,9 +70,10 @@ public class CmdPp implements Command {
             return;
         }
 
+        Member finalMember = member;
         mc.sendMessageEmbeds(embed.build()).queue(message -> {
             StringBuilder desc = new StringBuilder();
-            desc.append("**").append(member.getUser().getAsTag()).append("**'s pp:\n").append("**").append(getPP()).append("**");
+            desc.append("**").append(finalMember.getUser().getAsTag()).append("**'s pp:\n").append("**").append(getPP()).append("**");
 
             try {
                 TimeUnit.SECONDS.sleep(1);

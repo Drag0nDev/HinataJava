@@ -84,9 +84,7 @@ public class CmdDeleteChannel implements Command {
     }
 
     @Override
-    public void execute(Message msg, Object... args) {
-        Guild guild = msg.getGuild();
-        TextChannel tc = msg.getTextChannel();
+    public void runCommand(Message msg, Guild guild, TextChannel tc, Member member) {
         String[] arguments = bot.getArguments(msg);
         EmbedBuilder embed = new EmbedBuilder();
 

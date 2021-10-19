@@ -47,7 +47,7 @@ public class CmdHowGay implements Command {
     public void run(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) {
         EmbedBuilder embed = new EmbedBuilder().setTitle("howgay")
                 .setColor(Colors.NORMAL.getCode())
-                .setDescription("Calculating");
+                .setDescription("Calculating!");
 
         User user;
 
@@ -77,12 +77,10 @@ public class CmdHowGay implements Command {
     }
 
     @Override
-    public void execute(Message msg, Object... args) {
+    public void runCommand(Message msg, Guild guild, TextChannel tc, Member member) {
         EmbedBuilder embed = new EmbedBuilder().setTitle("howgay")
                 .setColor(Colors.NORMAL.getCode())
                 .setDescription("Calculating");
-        Member member;
-        Guild guild = msg.getGuild();
         MessageChannel mc = msg.getChannel();
         String[] arguments = bot.getArguments(msg);
 
@@ -100,16 +98,17 @@ public class CmdHowGay implements Command {
             try {
                 throw new Exception("member value is null");
             } catch (Exception e) {
-                e.printStackTrace();
+                bot.getLogger().error(String.valueOf(e));
             }
             return;
         }
 
+        Member finalMember = member;
         mc.sendMessageEmbeds(embed.build()).queue(message -> {
             StringBuilder desc = new StringBuilder();
             int gayrate = getGayrate();
 
-            desc.append("**").append(member.getUser().getAsTag()).append("** is: ").append("**").append(gayrate).append("%** gay!");
+            desc.append("**").append(finalMember.getUser().getAsTag()).append("** is: ").append("**").append(gayrate).append("%** gay!");
             embed.setDescription(desc);
 
             if (gayrate > 50)

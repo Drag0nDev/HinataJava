@@ -16,7 +16,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 
-import static hinata.bot.util.Utils.sendNSFWWarning;
+import static hinata.bot.util.utils.Utils.sendNSFWWarning;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.USER;
 
 @CommandDescription(
@@ -80,13 +80,11 @@ public class CmdGrope implements Command {
     }
 
     @Override
-    public void execute(Message msg, Object... args) {
+    public void runCommand(Message msg, Guild guild, TextChannel tc, Member member) {
         String[] arguments = bot.getArguments(msg);
         String text;
-        TextChannel tc = msg.getTextChannel();
+        
         Member executor = msg.getMember();
-        Member member;
-        Guild guild = msg.getGuild();
 
         if (!tc.isNSFW()) {
             sendNSFWWarning(tc);

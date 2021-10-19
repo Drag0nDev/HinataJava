@@ -50,8 +50,7 @@ public class CmdCry implements Command {
     }
 
     @Override
-    public void execute(Message msg, Object... args) {
-        TextChannel tc = msg.getTextChannel();
+    public void runCommand(Message msg, Guild guild, TextChannel tc, Member member) {
         Member executor = msg.getMember();
 
         assert executor != null;

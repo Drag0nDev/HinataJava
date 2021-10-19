@@ -72,13 +72,11 @@ public class CmdKiss implements Command {
     }
 
     @Override
-    public void execute(Message msg, Object... args) {
+    public void runCommand(Message msg, Guild guild, TextChannel tc, Member member) {
         String[] arguments = bot.getArguments(msg);
         String text;
-        TextChannel tc = msg.getTextChannel();
+        
         Member executor = msg.getMember();
-        Member member;
-        Guild guild = msg.getGuild();
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setColor(Colors.NORMAL.getCode())

@@ -1,7 +1,7 @@
 package hinata.bot.events;
 
 import hinata.bot.Hinata;
-import hinata.bot.util.Config;
+import hinata.bot.util.utils.Config;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.json.simple.parser.ParseException;
@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 public class Listener extends ListenerAdapter {
 
@@ -17,7 +18,7 @@ public class Listener extends ListenerAdapter {
     private final Config config = new Config();
     private final Hinata bot;
 
-    public Listener(Hinata bot) throws IOException, ParseException {
+    public Listener(Hinata bot) throws IOException, ParseException, URISyntaxException {
         this.bot = bot;
     }
 

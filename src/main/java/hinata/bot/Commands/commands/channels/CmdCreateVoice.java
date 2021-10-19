@@ -73,10 +73,7 @@ public class CmdCreateVoice implements Command {
     }
 
     @Override
-    public void execute(Message msg, Object... args) {
-        Member member = msg.getMember();
-        Guild guild = msg.getGuild();
-        TextChannel tc = msg.getTextChannel();
+    public void runCommand(Message msg, Guild guild, TextChannel tc, Member member) {
         String[] arguments = bot.getArguments(msg);
         String name = arguments[0];
         EmbedBuilder embed = new EmbedBuilder();

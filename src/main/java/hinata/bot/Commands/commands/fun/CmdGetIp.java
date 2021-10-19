@@ -74,14 +74,12 @@ public class CmdGetIp implements Command {
     }
 
     @Override
-    public void execute(Message msg, Object... args) {
+    public void runCommand(Message msg, Guild guild, TextChannel tc, Member member) {
         EmbedBuilder embed = new EmbedBuilder()
                 .setTitle("getip")
                 .setImage("https://media1.tenor.com/images/b7cd57136bb82a1784bedc5408149eb1/tenor.gif?itemid=13247943")
                 .setDescription("Getting ip ...")
                 .setColor(Colors.NORMAL.getCode());
-        Member member;
-        Guild guild = msg.getGuild();
         MessageChannel mc = msg.getChannel();
         String[] arguments = bot.getArguments(msg);
 
@@ -97,9 +95,10 @@ public class CmdGetIp implements Command {
 
         assert member != null;
 
+        Member finalMember = member;
         mc.sendMessageEmbeds(embed.build()).queue(message -> {
             StringBuilder desc = new StringBuilder();
-            desc.append("**").append(member.getUser().getAsTag()).append("**'s IP: ").append("**").append(getIp()).append("**");
+            desc.append("**").append(finalMember.getUser().getAsTag()).append("**'s IP: ").append("**").append(getIp()).append("**");
 
             try {
                 TimeUnit.SECONDS.sleep(1);

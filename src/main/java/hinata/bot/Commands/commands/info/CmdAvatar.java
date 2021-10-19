@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
+import java.time.ZonedDateTime;
 import java.util.Objects;
 
 import static net.dv8tion.jda.api.interactions.commands.OptionType.USER;
@@ -42,11 +43,8 @@ public class CmdAvatar implements Command {
     }
 
     @Override
-    public void execute(Message msg, Object... args) {
+    public void runCommand(Message msg, Guild guild, TextChannel tc, Member member) {
         String[] arguments = bot.getArguments(msg);
-        TextChannel tc = msg.getTextChannel();
-        Member member;
-        Guild guild = msg.getGuild();
 
         if (arguments.length > 0) {
             if (!msg.getMentionedMembers().isEmpty()) {
@@ -59,10 +57,13 @@ public class CmdAvatar implements Command {
         }
 
         assert member != null;
-        tc.sendMessageEmbeds(new EmbedBuilder().setColor(Colors.NORMAL.getCode())
+        tc.sendMessageEmbeds(new EmbedBuilder()
+                .setColor(Colors.NORMAL.getCode())
                 .setTitle("Avatar of: " + member.getUser().getAsTag())
                 .setImage(member.getUser().getEffectiveAvatarUrl() + "?size=4096")
-                .build()).queue();
+                .setTimestamp(ZonedDateTime.now())
+                .build())
+                .queue();
     }
 
     @Override
@@ -73,7 +74,9 @@ public class CmdAvatar implements Command {
         hook.sendMessageEmbeds(new EmbedBuilder().setColor(Colors.NORMAL.getCode())
                 .setTitle("Avatar of: " + user.getAsTag())
                 .setImage(user.getEffectiveAvatarUrl() + "?size=4096")
-                .build()).queue();
+                        .setTimestamp(ZonedDateTime.now())
+                .build())
+                .queue();
     }
 
     @Override

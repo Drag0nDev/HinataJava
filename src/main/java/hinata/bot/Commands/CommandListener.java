@@ -4,6 +4,7 @@ import com.github.rainestormee.jdacommand.CommandHandler;
 import hinata.bot.Hinata;
 import hinata.bot.constants.Colors;
 import hinata.bot.events.Listener;
+import hinata.bot.util.exceptions.HinataException;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
@@ -19,6 +20,9 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.regex.*;
+
+import static hinata.bot.util.utils.Utils.getArgs;
+import static hinata.bot.util.utils.Utils.getSupportInvite;
 
 public class CommandListener extends ListenerAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(Listener.class);
@@ -38,7 +42,6 @@ public class CommandListener extends ListenerAdapter {
 
     @Override
     public void onSlashCommand(SlashCommandEvent event) {
-        Calendar now = Calendar.getInstance();
         event.deferReply().queue();
         if (event.getGuild() == null)
             return;
@@ -55,9 +58,6 @@ public class CommandListener extends ListenerAdapter {
                 return;
 
             if (!self.hasPermission((GuildChannel) tc, Permission.MESSAGE_WRITE))
-                return;
-
-            if (command.getAttribute("category").equals("owner") && !member.getId().equals(bot.getConfig().getOwner()))
                 return;
 
             StringBuilder args = new StringBuilder();
@@ -80,6 +80,11 @@ public class CommandListener extends ListenerAdapter {
                         tc.getName()
                 );
 
+                if (command.getAttribute("category").equals("owner") && !member.getId().equals(bot.getConfig().getOwner())) {
+                    sendOwnerOnly(event.getHook(), command);
+                    return;
+                }
+
                 if (command.getNeededPermissions() != null) {
                     for (Permission permission : command.getNeededPermissions()) {
                         //check member permissions
@@ -97,6 +102,8 @@ public class CommandListener extends ListenerAdapter {
                 }
 
                 command.executeSlash(event);
+            } catch (HinataException message) {
+                sendCustomError(event.getHook(), message);
             } catch (Exception e) {
                 sendError(event);
                 LOGGER.error("Couldn't preform command {}!", event.getName(), e);
@@ -130,19 +137,8 @@ public class CommandListener extends ListenerAdapter {
 
             //find the used prefix
             List<String> prefix = bot.getConfig().getPrefix();
-            String usedPrefix = "";
-            int i = 0;
-
-            while (usedPrefix.equals("")) {
-                String toFind = "^" + prefix.get(i);
-                Pattern pattern = Pattern.compile(toFind, Pattern.CASE_INSENSITIVE);
-                Matcher matcher = pattern.matcher(raw);
-                boolean matchFound = matcher.find();
-                if (matchFound) usedPrefix = prefix.get(i);
-                i++;
-            }
-
-            raw = raw.replaceFirst(Pattern.quote(usedPrefix), "");
+            raw = getArgs(raw, prefix);
+            int i;
             String[] args = Arrays.copyOfRange(raw.trim().split("\\s+"), 0, 10);
 
             TextChannel tc = event.getChannel();
@@ -157,9 +153,6 @@ public class CommandListener extends ListenerAdapter {
                 return;
 
             if (!self.hasPermission(tc, Permission.MESSAGE_WRITE))
-                return;
-
-            if (command.getAttribute("category").equals("owner") && !member.getId().equals(bot.getConfig().getOwner()))
                 return;
 
             try {
@@ -183,6 +176,11 @@ public class CommandListener extends ListenerAdapter {
                         tc.getName()
                 );
 
+                if (command.getAttribute("category").equals("owner") && !member.getId().equals(bot.getConfig().getOwner())) {
+                    sendOwnerOnly(tc, command);
+                    return;
+                }
+
                 if (command.getNeededPermissions() != null) {
                     for (Permission permission : command.getNeededPermissions()) {
                         //check member permissions
@@ -199,7 +197,9 @@ public class CommandListener extends ListenerAdapter {
                     }
                 }
 
-                HANDLER.execute(command, msg, (Object[]) arguments);
+                command.runCommand(msg, msg.getGuild(), msg.getTextChannel(), msg.getMember());
+            } catch (HinataException message) {
+                sendCustomError(tc, message);
             } catch (Exception e) {
                 sendError(tc);
                 LOGGER.info("Couldn't preform command {}!", command.getDescription().name(), e);
@@ -240,22 +240,8 @@ public class CommandListener extends ListenerAdapter {
         return false;
     }
 
-    private void sendError(SlashCommandEvent event) {
-        String inviteLink;
-        Optional<Invite> invite;
-        Guild support = bot.getBot().getGuildById("645047329141030936");
-        List<Invite> invites = Objects.requireNonNull(support).retrieveInvites().complete();
-
-
-        invite = invites.stream().findFirst();
-        if (invite.isPresent())
-            inviteLink = invite.get().getUrl();
-        else {
-            Invite base = Objects.requireNonNull(support.getDefaultChannel())
-                    .createInvite()
-                    .complete();
-            inviteLink = base.getUrl();
-        }
+    private void sendError(@NotNull SlashCommandEvent event) {
+        String inviteLink = getSupportInvite(this.bot);
 
         EmbedBuilder embed = new EmbedBuilder().setColor(Colors.ERROR.getCode())
                 .setTitle("An error occurred")
@@ -268,22 +254,8 @@ public class CommandListener extends ListenerAdapter {
 
     }
 
-    private void sendError(TextChannel tc) {
-        String inviteLink;
-        Optional<Invite> invite;
-        Guild support = bot.getBot().getGuildById("645047329141030936");
-        List<Invite> invites = Objects.requireNonNull(support).retrieveInvites().complete();
-
-
-        invite = invites.stream().findFirst();
-        if (invite.isPresent())
-            inviteLink = invite.get().getUrl();
-        else {
-            Invite base = Objects.requireNonNull(support.getDefaultChannel())
-                    .createInvite()
-                    .complete();
-            inviteLink = base.getUrl();
-        }
+    private void sendError(@NotNull TextChannel tc) {
+        String inviteLink = getSupportInvite(this.bot);
 
         EmbedBuilder embed = new EmbedBuilder().setColor(Colors.ERROR.getCode())
                 .setTitle("An error occurred")
@@ -293,30 +265,53 @@ public class CommandListener extends ListenerAdapter {
 
 
         tc.sendMessageEmbeds(embed.build()).queue();
-
     }
 
-    private void sendNoPermissionError(InteractionHook hook, Member member, Member self, Permission permission) {
+    private void sendCustomError(@NotNull TextChannel tc, @NotNull HinataException e) {
         EmbedBuilder embed = new EmbedBuilder().setColor(Colors.ERROR.getCode())
-                .setTitle("No Permission")
+                .setDescription(e.getMessage())
                 .setTimestamp(ZonedDateTime.now());
 
-        if (member == self) {
-            embed.setDescription(
-                    "I don't have the required permission to run this command\n" +
-                            "**Missing permission:** " + permission.getName()
-            );
-        } else {
-            embed.setDescription(
-                    "You don't have the required permission to run this command\n" +
-                            "**Missing permission:** " + permission.getName()
-            );
-        }
+        tc.sendMessageEmbeds(embed.build()).queue();
+    }
+
+    private void sendCustomError(@NotNull InteractionHook hook, @NotNull HinataException e) {
+        EmbedBuilder embed = new EmbedBuilder().setColor(Colors.ERROR.getCode())
+                .setDescription(e.getMessage())
+                .setTimestamp(ZonedDateTime.now());
 
         hook.sendMessageEmbeds(embed.build()).queue();
     }
 
-    private void sendNoPermissionError(TextChannel tc, Member member, Member self, Permission permission) {
+    private void sendNoPermissionError(@NotNull InteractionHook hook, Member member, Member self, Permission permission) {
+        hook.sendMessageEmbeds(sendNoPermissionEmbed(member, self, permission)).queue();
+    }
+
+    private void sendNoPermissionError(@NotNull TextChannel tc, Member member, Member self, Permission permission) {
+        tc.sendMessageEmbeds(sendNoPermissionEmbed(member, self, permission)).queue();
+    }
+
+    private void sendOwnerOnly(@NotNull TextChannel tc, @NotNull Command cmd) {
+        tc.sendMessageEmbeds(
+                        new EmbedBuilder().setColor(Colors.ERROR.getCode())
+                                .setTitle("Owner only")
+                                .setDescription("This command (**" + cmd.getDescription().name() + "**) is only for the owner of the bot")
+                                .setTimestamp(ZonedDateTime.now())
+                                .build())
+                .queue();
+    }
+
+    private void sendOwnerOnly(@NotNull InteractionHook tc, @NotNull Command cmd) {
+        tc.sendMessageEmbeds(
+                        new EmbedBuilder().setColor(Colors.ERROR.getCode())
+                                .setTitle("Owner only")
+                                .setDescription("This command (**" + cmd.getDescription().name() + "**) is only for the owner of the bot")
+                                .setTimestamp(ZonedDateTime.now())
+                                .build())
+                .queue();
+    }
+
+    private @NotNull MessageEmbed sendNoPermissionEmbed(Member member, Member self, Permission permission) {
         EmbedBuilder embed = new EmbedBuilder().setColor(Colors.ERROR.getCode())
                 .setTitle("No Permission")
                 .setTimestamp(ZonedDateTime.now());
@@ -333,6 +328,6 @@ public class CommandListener extends ListenerAdapter {
             );
         }
 
-        tc.sendMessageEmbeds(embed.build()).queue();
+        return embed.build();
     }
 }

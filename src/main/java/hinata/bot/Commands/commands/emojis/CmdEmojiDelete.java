@@ -68,9 +68,7 @@ public class CmdEmojiDelete implements Command {
     }
 
     @Override
-    public void execute(Message msg, Object... args) {
-        TextChannel tc = msg.getTextChannel();
-        Guild guild = msg.getGuild();
+    public void runCommand(Message msg, Guild guild, TextChannel tc, Member member) {
         String[] arguments = bot.getArguments(msg);
         EmbedBuilder embed = new EmbedBuilder()
                 .setTitle("Emoji delete")

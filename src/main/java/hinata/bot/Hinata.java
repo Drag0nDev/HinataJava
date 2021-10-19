@@ -3,7 +3,7 @@ package hinata.bot;
 import com.github.rainestormee.jdacommand.CommandHandler;
 import hinata.bot.Commands.CommandListener;
 import hinata.bot.Commands.CommandLoader;
-import hinata.bot.util.Config;
+import hinata.bot.util.utils.Config;
 import hinata.bot.events.Listener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -19,31 +19,34 @@ import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static hinata.bot.util.utils.Utils.getArgs;
+
 public class Hinata {
     private final Config config = new Config();
-    private static final Logger LOGGER = LoggerFactory.getLogger(Listener.class);
+    private static final Logger logger = LoggerFactory.getLogger(Listener.class);
 
-    private JDA bot = null;
+    private static JDA bot = null;
 
     private final CommandLoader commandLoader = new CommandLoader(this);
     private final CommandHandler<Message> CMD_HANDLER = new CommandHandler<>();
 
-    public Hinata() throws IOException, ParseException {
+    public Hinata() throws IOException, ParseException, URISyntaxException {
     }
 
     public static void main(String[] arguments) {
         try {
             new Hinata().setup();
-        } catch (LoginException | IOException | ParseException ex) {
-            LOGGER.error("Couldn't login to Discord!", ex);
+        } catch (LoginException | IOException | ParseException | URISyntaxException ex) {
+            logger.error("Couldn't login to Discord!", ex);
         }
     }
 
-    private void setup() throws LoginException, IOException, ParseException {
+    private void setup() throws LoginException, IOException, ParseException, URISyntaxException {
         CMD_HANDLER.registerCommands(new HashSet<>(commandLoader.getCommands()));
 
         bot = JDABuilder
@@ -65,7 +68,7 @@ public class Hinata {
         commandLoader.loadSlashCommands(this);
     }
 
-    public JDA getBot() {
+    public static JDA getBot() {
         return bot;
     }
 
@@ -73,8 +76,8 @@ public class Hinata {
         return config;
     }
 
-    public Logger getLogger() {
-        return LOGGER;
+    public static Logger getLogger() {
+        return logger;
     }
 
     public CommandHandler<Message> getCmdHandler() {
@@ -85,21 +88,13 @@ public class Hinata {
         //find the used prefix
         String raw = msg.getContentRaw();
         List<String> prefix = this.getConfig().getPrefix();
-        String usedPrefix = "";
-        int i = 0;
-
-        while (usedPrefix.equals("")) {
-            String toFind = "^" + prefix.get(i);
-            Pattern pattern = Pattern.compile(toFind, Pattern.CASE_INSENSITIVE);
-            Matcher matcher = pattern.matcher(raw);
-            boolean matchFound = matcher.find();
-            if (matchFound) usedPrefix = prefix.get(i);
-            i++;
-        }
-
-        raw = raw.replaceFirst(Pattern.quote(usedPrefix), "");
+        raw = getArgs(raw, prefix);
         String[] split = raw.split("\\s+");
 
         return Arrays.copyOfRange(split, 1, split.length);
+    }
+
+    public Hinata getHinata() {
+        return this;
     }
 }

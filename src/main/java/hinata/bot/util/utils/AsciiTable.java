@@ -1,4 +1,4 @@
-package hinata.bot.util;
+package hinata.bot.util.utils;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -89,8 +89,8 @@ public class CmdEmoji implements Command {
     }
 
     @Override
-    public void execute(Message msg, Object... args) {
-        TextChannel tc = msg.getTextChannel();
+    public void runCommand(Message msg, Guild guild, TextChannel tc, Member member) {
+        
         EmbedBuilder embed = new EmbedBuilder()
                 .setTitle("Emoji")
                 .setColor(Colors.NORMAL.getCode())

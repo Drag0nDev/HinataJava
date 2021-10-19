@@ -5,7 +5,7 @@ import com.github.rainestormee.jdacommand.*;
 import hinata.bot.Commands.Command;
 import hinata.bot.Hinata;
 import hinata.bot.constants.Colors;
-import hinata.bot.util.AsciiTable;
+import hinata.bot.util.utils.AsciiTable;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
@@ -17,6 +17,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import java.time.ZonedDateTime;
 import java.util.*;
 
+import static hinata.bot.util.utils.Utils.getSupportInvite;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
 
 @CommandDescription(
@@ -48,16 +49,14 @@ public class CmdHelp implements Command {
         categories.add("emojis");
         categories.add("fun");
         categories.add("info");
+        categories.add("owner");
         categories.add("reactions");
     }
 
     @Override
-    public void execute(Message msg, Object... args) {
+    public void runCommand(Message msg, Guild guild, TextChannel tc, Member member) {
         String[] arguments = bot.getArguments(msg);
         Map<String, ArrayList<String>> cmdMap = new HashMap<>();
-        TextChannel tc = msg.getTextChannel();
-        Member member = msg.getMember();
-        Guild guild = msg.getGuild();
 
         //map the categories and their commands
         for (String cat : categories) {
@@ -69,17 +68,19 @@ public class CmdHelp implements Command {
             }
         }
 
+        assert member != null;
+
         if (arguments.length > 0) {
             Command cmd = (Command) bot.getCmdHandler().findCommand(arguments[0]);
 
             //check if command exists
             if (cmd == null || !isCommand(cmd)) {
-                tc.sendMessageEmbeds(showHelpMenu(cmdMap, arguments[0])).queue();
+                tc.sendMessageEmbeds(showHelpMenu(cmdMap, arguments[0], member.getUser())).queue();
                 return;
             }
 
             //check if it is an owner only command
-            if (cmd.getAttribute("category").contains("owner")) {
+            if (cmd.getAttribute("category").contains("owner") && member.getUser().getId().equals(this.bot.getConfig().getOwner())) {
                 EmbedBuilder embed = new EmbedBuilder().setColor(Colors.ERROR.getCode())
                         .setTitle("Bot owner only command")
                         .setDescription("This command is not available for your use.\n" +
@@ -92,7 +93,7 @@ public class CmdHelp implements Command {
 
             tc.sendMessageEmbeds(commandHelp(member, guild, cmd)).queue();
         } else {
-            tc.sendMessageEmbeds(showHelpMenu(cmdMap, null)).queue();
+            tc.sendMessageEmbeds(showHelpMenu(cmdMap, null, member.getUser())).queue();
         }
     }
 
@@ -117,7 +118,7 @@ public class CmdHelp implements Command {
 
             //check if command exists
             if (cmd == null || !isCommand(cmd)) {
-                hook.sendMessageEmbeds(showHelpMenu(cmdMap, input)).queue();
+                hook.sendMessageEmbeds(showHelpMenu(cmdMap, input, event.getUser())).queue();
                 return;
             }
 
@@ -135,7 +136,7 @@ public class CmdHelp implements Command {
 
             hook.sendMessageEmbeds(commandHelp(member, guild, cmd)).queue();
         } else
-            hook.sendMessageEmbeds(showHelpMenu(cmdMap, null)).queue();
+            hook.sendMessageEmbeds(showHelpMenu(cmdMap, null, event.getUser())).queue();
     }
 
     private MessageEmbed commandHelp(Member member, Guild guild, Command cmd) {
@@ -164,17 +165,23 @@ public class CmdHelp implements Command {
         return embed.build();
     }
 
-    private MessageEmbed showHelpMenu(Map<String, ArrayList<String>> cmdMap, String category) {
+    private MessageEmbed showHelpMenu(Map<String, ArrayList<String>> cmdMap, String category, User user) {
         if (category == null) {
             //show all commands
-            EmbedBuilder embed = new EmbedBuilder().setTitle("help", "https://discord.gg/ReBJ4AB")
+            EmbedBuilder embed = new EmbedBuilder().setTitle("help", getSupportInvite(this.bot))
                     .setColor(Colors.NORMAL.getCode())
                     .setTimestamp(ZonedDateTime.now());
 
-            for (Map.Entry catMap : cmdMap.entrySet()) {
+            if (!user.getId().equals(this.bot.getConfig().getOwner()))
+                cmdMap.remove("owner");
+
+            //sort the categories that act as keys
+            ArrayList<String> sortedKeys = new ArrayList<>(cmdMap.keySet());
+            Collections.sort(sortedKeys);
+
+            for (String cat : sortedKeys) {
                 StringBuilder cmdStr = new StringBuilder();
-                String cat = (String) catMap.getKey();
-                ArrayList<String> cmdArray = (ArrayList<String>) catMap.getValue();
+                ArrayList<String> cmdArray = cmdMap.get(cat);
 
                 for (String cmd : cmdArray) {
                     cmdStr.append(cmd).append("\n");
@@ -185,24 +192,34 @@ public class CmdHelp implements Command {
                 if (embed.getFields().size() >= 10) {
                     break;
                 }
+
             }
 
             return embed.build();
         } else {
             if (cmdMap.containsKey(category)) {
-                ArrayList<String> cmds = cmdMap.get(category);
+                if (!category.equals("owner") && !user.getId().equals(this.bot.getConfig().getOwner())) {
+                    ArrayList<String> cmds = cmdMap.get(category);
 
-                EmbedBuilder embed = new EmbedBuilder().setColor(Colors.NORMAL.getCode())
-                        .setTitle("Category: " + category)
-                        .setTimestamp(ZonedDateTime.now());
+                    EmbedBuilder embed = new EmbedBuilder().setColor(Colors.NORMAL.getCode())
+                            .setTitle("Category: " + category)
+                            .setTimestamp(ZonedDateTime.now());
 
-                for (String cmdStr : cmds) {
-                    Command cmd = (Command) bot.getCmdHandler().findCommand(cmdStr);
+                    for (String cmdStr : cmds) {
+                        Command cmd = (Command) bot.getCmdHandler().findCommand(cmdStr);
 
-                    embed.addField(cmd.getDescription().name(), cmd.getDescription().description(), false);
+                        embed.addField(cmd.getDescription().name(), cmd.getDescription().description(), false);
+                    }
+
+                    return embed.build();
+                } else {
+                    return new EmbedBuilder().setColor(Colors.ERROR.getCode())
+                            .setTitle("Bot owner only command")
+                            .setDescription("This command is not available for your use.\n" +
+                                    "This command can only be used by the bot owner.")
+                            .setTimestamp(ZonedDateTime.now())
+                            .build();
                 }
-
-                return embed.build();
             } else {
                 return new EmbedBuilder().setColor(Colors.ERROR.getCode())
                         .setTitle("No command found")

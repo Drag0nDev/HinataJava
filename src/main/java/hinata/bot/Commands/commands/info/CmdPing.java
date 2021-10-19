@@ -37,7 +37,7 @@ public class CmdPing implements Command {
     }
 
     @Override
-    public void execute(Message msg, Object... args) {
+    public void runCommand(Message msg, Guild guild, TextChannel tc, Member member) {
         Date now = new Date();
         Date sent = new Date(msg.getTimeCreated().toInstant().toEpochMilli());
 

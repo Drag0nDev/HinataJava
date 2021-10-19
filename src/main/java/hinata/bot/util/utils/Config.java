@@ -1,13 +1,13 @@
-package hinata.bot.util;
+package hinata.bot.util.utils;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
@@ -17,12 +17,12 @@ public class Config {
     private final List<String> prefix;
     private final long levelXp;
 
-    public Config() throws IOException, ParseException {
+    public Config() throws IOException, ParseException, URISyntaxException {
         JSONParser parser = new JSONParser();
         Object obj;
         JSONObject config;
 
-        obj = parser.parse(new FileReader("src/main/resources/config.json"));
+        obj = parser.parse(new FileReader(getConfigFile("config.json")));
         config = (JSONObject) obj;
 
         this.token = (String) config.get("token");
@@ -31,6 +31,16 @@ public class Config {
 
         JSONArray prefix = (JSONArray) config.get("prefix");
         this.prefix = (List<String>) prefix;
+    }
+
+    private File getConfigFile(String fileName) throws URISyntaxException {
+        ClassLoader classLoader = getClass().getClassLoader();
+        URL resource = classLoader.getResource(fileName);
+        if (resource == null) {
+            throw new IllegalArgumentException("file not found! " + fileName);
+        } else {
+            return new File(resource.toURI());
+        }
     }
 
     public String getToken() {
