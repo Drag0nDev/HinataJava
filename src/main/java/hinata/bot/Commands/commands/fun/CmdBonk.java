@@ -86,7 +86,7 @@ public class CmdBonk implements Command {
     }
 
     @Override
-    public CommandData slashInfo() {
+    public CommandData getSlashInfo() {
         return slashInfo;
     }
 

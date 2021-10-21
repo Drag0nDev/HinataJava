@@ -50,7 +50,7 @@ public class CmdStats implements Command {
     }
 
     @Override
-    public CommandData slashInfo() {
+    public CommandData getSlashInfo() {
         return this.slashInfo;
     }
 
@@ -61,7 +61,7 @@ public class CmdStats implements Command {
                 .setColor(Colors.NORMAL.getCode())
                 .setAuthor(Hinata.getBot().getSelfUser().getAsTag(), generateSupportInvite(Hinata.getBot()))
                 .setThumbnail(Hinata.getBot().getSelfUser().getAvatarUrl())
-                .setFooter("©2020-" + Calendar.getInstance().get(Calendar.YEAR) + "Copyright: " + owner.getAsTag() + "\n" +
+                .setFooter("©2020-" + Calendar.getInstance().get(Calendar.YEAR) + " Copyright: " + owner.getAsTag() + "\n" +
                         "Version: " + this.bot.getVersion())
                 .addField("Developer", owner.getAsTag(), true)
                 .addField("Developer ID", owner.getId(), true)
@@ -70,7 +70,7 @@ public class CmdStats implements Command {
                 .addField("In server", guild.getName(), true)
                 .addField("Uptime", getUptime(), true)
                 .addField("Other", "**Server count**: " + Hinata.getBot().getGuilds().size(), true)
-                .addField("Links", "`• [**Join my support sever!** - Join if you need extra help!](" + generateSupportInvite(Hinata.getBot()) + ")\n" +
+                .addField("Links", "• [**Join my support sever!** - Join if you need extra help!](" + generateSupportInvite(Hinata.getBot()) + ")\n" +
                         "• [**My invite link** - It's always fun with me in the server!](" + generateInvite() + ")", false);
 
         return embed.build();

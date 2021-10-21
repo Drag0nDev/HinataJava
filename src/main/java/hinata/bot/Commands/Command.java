@@ -1,7 +1,6 @@
 package hinata.bot.Commands;
 
 import com.github.rainestormee.jdacommand.AbstractCommand;
-import hinata.bot.util.exceptions.HinataException;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -15,12 +14,12 @@ import java.util.ArrayList;
 
 public interface Command extends AbstractCommand<Message> {
 
-    default void runSlash(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) throws HinataException {};
+    default void runSlash(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) throws Exception {};
 
     @Override
     default void execute(Message object, Object... args){} //This code is useless for Custom error messages
 
-    default CommandData slashInfo() {
+    default CommandData getSlashInfo() {
         return null;
     }
 
@@ -36,5 +35,5 @@ public interface Command extends AbstractCommand<Message> {
         return 0;
     }
 
-    void runCommand(Message msg, Guild guild, TextChannel tc, Member member) throws HinataException;
+    void runCommand(Message msg, Guild guild, TextChannel tc, Member member) throws Exception;
 }

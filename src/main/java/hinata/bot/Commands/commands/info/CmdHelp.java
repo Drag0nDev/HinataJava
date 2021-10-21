@@ -274,7 +274,7 @@ public class CmdHelp implements Command {
     }
 
     @Override
-    public CommandData slashInfo() {
+    public CommandData getSlashInfo() {
         return slashInfo;
     }
 

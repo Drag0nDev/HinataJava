@@ -42,7 +42,6 @@ public class Utils {
 
     public static @NotNull Message jsonToMessage(@NotNull JsonObject json) {
         MessageBuilder messageBuilder = new MessageBuilder();
-        EmbedBuilder embedBuilder = new EmbedBuilder();
 
         JsonPrimitive contentObj = json.getAsJsonPrimitive("content");
         if (contentObj != null)
@@ -55,16 +54,7 @@ public class Utils {
     public static @NotNull Message jsonToMessage(String str) {
         JsonObject json = stringToJsonEmbed(str);
 
-        MessageBuilder messageBuilder = new MessageBuilder();
-        EmbedBuilder embedBuilder = new EmbedBuilder();
-
-        JsonPrimitive contentObj = json.getAsJsonPrimitive("content");
-        if (contentObj != null)
-            messageBuilder.setContent(contentObj.getAsString());
-
-        messageBuilder.setEmbeds(jsonToEmbed(json));
-
-        return messageBuilder.build();
+        return jsonToMessage(json);
     }
     public static @NotNull MessageEmbed jsonToEmbed(@NotNull JsonObject json) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
@@ -132,67 +122,7 @@ public class Utils {
     public static @NotNull MessageEmbed jsonToEmbed(String str) {
         JsonObject json = stringToJsonEmbed(str);
 
-        EmbedBuilder embedBuilder = new EmbedBuilder();
-
-        JsonPrimitive titleObj = json.getAsJsonPrimitive("title");
-        if (titleObj != null) // Make sure the object is not null before adding it onto the embed.
-            embedBuilder.setTitle(titleObj.getAsString());
-
-
-        JsonObject authorObj = json.getAsJsonObject("author");
-        if (authorObj != null) {
-            String authorName = authorObj.get("name").getAsString();
-            String authorIconUrl = authorObj.get("icon_url").getAsString();
-            if (authorIconUrl != null) // Make sure the icon_url is not null before adding it onto the embed. If its null then add just the author's name.
-                embedBuilder.setAuthor(authorName, authorIconUrl);
-            else
-                embedBuilder.setAuthor(authorName);
-        }
-
-        JsonPrimitive descObj = json.getAsJsonPrimitive("description");
-        if (descObj != null)
-            embedBuilder.setDescription(descObj.getAsString());
-
-
-        JsonPrimitive colorObj = json.getAsJsonPrimitive("color");
-        if (colorObj != null) {
-            String colorStr = colorObj.getAsString().replace("#", "0x");
-            Color color = new Color(Integer.decode(colorStr));
-            embedBuilder.setColor(color);
-        }
-
-        JsonArray fieldsArray = json.getAsJsonArray("fields");
-        if (fieldsArray != null) {
-            // Loop over the fields array and add each one by order to the embed.
-            fieldsArray.forEach(ele -> {
-                boolean inline;
-                String name = ele.getAsJsonObject().get("name").getAsString();
-                String content = ele.getAsJsonObject().get("value").getAsString();
-                if (ele.getAsJsonObject().get("inline") != null)
-                    inline = ele.getAsJsonObject().get("inline").getAsBoolean();
-                else
-                    inline = false;
-                embedBuilder.addField(name, content, inline);
-            });
-        }
-
-        JsonPrimitive thumbnailObj = json.getAsJsonPrimitive("thumbnail");
-        if (thumbnailObj != null) {
-            embedBuilder.setThumbnail(thumbnailObj.getAsString());
-        }
-
-        JsonObject footerObj = json.getAsJsonObject("footer");
-        if (footerObj != null) {
-            String content = footerObj.get("text").getAsString();
-            String footerIconUrl = footerObj.get("icon_url").getAsString();
-
-            if (footerIconUrl != null)
-                embedBuilder.setFooter(content, footerIconUrl);
-            else
-                embedBuilder.setFooter(content);
-        }
-
-        return embedBuilder.build();
+        return jsonToEmbed(json);
     }
 
     public static void sendNSFWWarning(@NotNull TextChannel tc, @NotNull InteractionHook hook){
@@ -232,7 +162,7 @@ public class Utils {
         return Hinata.getBot().getInviteUrl(
                 //for everything and smooth operations
                 Permission.ADMINISTRATOR,
-                //when the person cant give the admin permission or they dont want the bot to have it
+                //when the person can't give the admin permission, or they don't want the bot to have it
                 Permission.KICK_MEMBERS, Permission.BAN_MEMBERS, Permission.VOICE_MUTE_OTHERS,
                 Permission.MANAGE_CHANNEL, Permission.MANAGE_SERVER,
                 Permission.MESSAGE_ADD_REACTION,
@@ -283,6 +213,12 @@ public class Utils {
             return "-";
 
         return guild.getAfkChannel().getName();
+    }
+    public static @NotNull String getRegion(@NotNull Guild guild) {
+        if (guild.getVoiceChannels().stream().findFirst().isEmpty())
+            return "Could not get the region";
+
+        return guild.getVoiceChannels().stream().findFirst().get().getRegion().getName();
     }
 
     private static JsonObject stringToJsonEmbed(String str) {

@@ -136,7 +136,7 @@ public class CmdGrope implements Command {
     }
 
     @Override
-    public CommandData slashInfo() {
+    public CommandData getSlashInfo() {
         return this.slashInfo;
     }
 

@@ -38,73 +38,35 @@ public class CmdServerInfo implements Command {
 
     @Override
     public void runSlash(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) throws HinataException {
-        EmbedBuilder embed = new EmbedBuilder().setTitle(guild.getName())
-                .setThumbnail(guild.getIconUrl())
-                .setColor(Colors.NORMAL.getCode())
-                .setTimestamp(ZonedDateTime.now());
-
-        //checks
-        if (guild.getOwner() == null)
-            throw new HinataException("No owner found!");
-        if (guild.getVoiceChannels().stream().findFirst().isEmpty())
-            throw new HinataException("Error finding the region!");
-
-        //owner field
-        embed.addField("Owner", guild.getOwner().getUser().getAsTag(), true)
-                //users field
-                .addField("Users", String.valueOf(guild.getMemberCount()), true)
-                //find bot count
-                .addField("Bots", String.valueOf(getBots(guild)), true)
-                //get the creation date
-                .addField("Creation date", guild.getTimeCreated().format(format()), true)
-                //get amount of each channel sort
-                .addField(
-                        "Channels",
-                        "**Categories: " + getChannelAmount(guild.getChannels(), ChannelType.CATEGORY) + "\n" +
-                                "**Text channels:** " + getChannelAmount(guild.getChannels(), ChannelType.TEXT) + "\n" +
-                                "**Voice channels:** " + getChannelAmount(guild.getChannels(), ChannelType.VOICE),
-                        true
-                )
-                //loko for the system channel
-                .addField(
-                        "System channel",
-                        getSystemChannel(guild),
-                        true
-                )
-                //get afk channel
-                .addField(
-                        "AFK channel",
-                        getAfkChannel(guild),
-                        true
-                )
-                //other minor fields
-                .addField("Region", guild.getVoiceChannels().stream().findFirst().get().getRegionRaw(), true)
-                .addField("Verification level", guild.getVerificationLevel().name(), true)
-                .addField("Boost tier", guild.getBoostTier().name(), true)
-                .addField("Boosts", String.valueOf(guild.getBoostCount()), true);
-        
-        if (guild.getBannerUrl() != null)
-            embed.setImage(guild.getBannerUrl());
-        
-        hook.sendMessageEmbeds(embed.build()).queue();
+        hook.sendMessageEmbeds(createEmbed(guild)).queue();
     }
 
     @Override
     public void runCommand(Message msg, Guild guild, TextChannel tc, Member member) throws HinataException {
+        tc.sendMessageEmbeds(createEmbed(guild)).queue();
+    }
+
+    @Override
+    public CommandData getSlashInfo() {
+        return slashInfo;
+    }
+
+    private MessageEmbed createEmbed(Guild guild) throws HinataException {
         EmbedBuilder embed = new EmbedBuilder().setTitle(guild.getName())
                 .setThumbnail(guild.getIconUrl())
                 .setColor(Colors.NORMAL.getCode())
                 .setTimestamp(ZonedDateTime.now());
+
         //checks
         if (guild.getOwner() == null)
             throw new HinataException("No owner found!");
-        if (guild.getVoiceChannels().stream().findFirst().isEmpty())
-            throw new HinataException("Error finding the region!");
 
         //owner field
-        embed.addField("Owner", guild.getOwner().getUser().getAsTag(), true)
+        embed
+                .addField("Id", guild.getId(), true)
+                .addField("Owner", guild.getOwner().getUser().getAsTag(), true)
                 //users field
-                .addField("Users", String.valueOf(guild.getMemberCount()), true)
+                .addField("User", String.valueOf(guild.getMemberCount()), true)
                 //find bot count
                 .addField("Bots", String.valueOf(getBots(guild)), true)
                 //get the creation date
@@ -112,12 +74,12 @@ public class CmdServerInfo implements Command {
                 //get amount of each channel sort
                 .addField(
                         "Channels",
-                        "**Categories: " + getChannelAmount(guild.getChannels(), ChannelType.CATEGORY) + "\n" +
+                        "**Category: " + getChannelAmount(guild.getChannels(), ChannelType.CATEGORY) + "\n" +
                                 "**Text channels:** " + getChannelAmount(guild.getChannels(), ChannelType.TEXT) + "\n" +
                                 "**Voice channels:** " + getChannelAmount(guild.getChannels(), ChannelType.VOICE),
                         true
                 )
-                //loko for the system channel
+                //look for the system channel
                 .addField(
                         "System channel",
                         getSystemChannel(guild),
@@ -130,7 +92,7 @@ public class CmdServerInfo implements Command {
                         true
                 )
                 //other minor fields
-                .addField("Region", guild.getVoiceChannels().stream().findFirst().get().getRegionRaw(), true)
+                .addField("Region", getRegion(guild), true)
                 .addField("Verification level", guild.getVerificationLevel().name(), true)
                 .addField("Boost tier", guild.getBoostTier().name(), true)
                 .addField("Boosts", String.valueOf(guild.getBoostCount()), true);
@@ -138,11 +100,6 @@ public class CmdServerInfo implements Command {
         if (guild.getBannerUrl() != null)
             embed.setImage(guild.getBannerUrl());
 
-        tc.sendMessageEmbeds(embed.build()).queue();
-    }
-
-    @Override
-    public CommandData slashInfo() {
-        return slashInfo;
+        return embed.build();
     }
 }

@@ -124,7 +124,7 @@ public class CmdDeleteChannel implements Command {
     }
 
     @Override
-    public CommandData slashInfo() {
+    public CommandData getSlashInfo() {
         return this.slashInfo;
     }
 
