@@ -6,6 +6,9 @@ import hinata.bot.Commands.commands.emojis.CmdEmojiCreate;
 import hinata.bot.Commands.commands.emojis.CmdEmojiDelete;
 import hinata.bot.Commands.commands.owner.CmdShutdown;
 import hinata.bot.Commands.commands.owner.CmdTest;
+import hinata.bot.Commands.commands.roles.CmdRole;
+import hinata.bot.Commands.commands.roles.CmdRoleCreate;
+import hinata.bot.Commands.commands.roles.CmdRoleDelete;
 import hinata.bot.Hinata;
 import hinata.bot.events.Listener;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
@@ -72,7 +75,12 @@ public class CommandLoader {
                 new CmdPat(bot),
                 new CmdPoke(bot),
                 new CmdSlap(bot),
-                new CmdSpank(bot)
+                new CmdSpank(bot),
+
+                //roles commands
+                new CmdRole(bot),
+                new CmdRoleCreate(bot),
+                new CmdRoleDelete(bot)
         );
 
         LOGGER.info("Loaded {} commands!", COMMANDS.size());
@@ -86,12 +94,12 @@ public class CommandLoader {
         COMMANDS.addAll(Arrays.asList(commands));
     }
 
-    public void loadSlashCommands(Hinata bot) {
-        CommandListUpdateAction cmds = bot.getBot().updateCommands();
+    public void loadSlashCommands() {
+        CommandListUpdateAction cmds = Hinata.getBot().updateCommands();
 
         COMMANDS.forEach(cmd -> {
-            if (cmd.slashInfo() != null)
-                cmds.addCommands(cmd.slashInfo());
+            if (cmd.getSlashInfo() != null)
+                cmds.addCommands(cmd.getSlashInfo());
         });
 
         cmds.queue();

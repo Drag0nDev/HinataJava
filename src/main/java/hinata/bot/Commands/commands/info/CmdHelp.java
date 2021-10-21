@@ -51,6 +51,7 @@ public class CmdHelp implements Command {
         categories.add("info");
         categories.add("owner");
         categories.add("reactions");
+        categories.add("roles");
     }
 
     @Override
@@ -74,7 +75,7 @@ public class CmdHelp implements Command {
             Command cmd = (Command) bot.getCmdHandler().findCommand(arguments[0]);
 
             //check if command exists
-            if (cmd == null || !isCommand(cmd)) {
+            if (cmd == null || isCommand(cmd)) {
                 tc.sendMessageEmbeds(showHelpMenu(cmdMap, arguments[0], member.getUser())).queue();
                 return;
             }
@@ -117,7 +118,7 @@ public class CmdHelp implements Command {
             Command cmd = (Command) bot.getCmdHandler().findCommand(input);
 
             //check if command exists
-            if (cmd == null || !isCommand(cmd)) {
+            if (cmd == null || isCommand(cmd)) {
                 hook.sendMessageEmbeds(showHelpMenu(cmdMap, input, event.getUser())).queue();
                 return;
             }
@@ -231,7 +232,7 @@ public class CmdHelp implements Command {
     }
 
     private boolean isCommand(Command cmd) {
-        return cmd.getDescription() != null || cmd.hasAttribute("description");
+        return cmd.getDescription() == null && !cmd.hasAttribute("description");
     }
 
     private String checkPermissions(Member member, Member self, Command cmd) {
