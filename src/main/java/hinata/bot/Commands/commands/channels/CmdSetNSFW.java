@@ -5,6 +5,7 @@ import com.github.rainestormee.jdacommand.CommandDescription;
 import hinata.bot.Commands.Command;
 import hinata.bot.Hinata;
 import hinata.bot.constants.Colors;
+import hinata.bot.util.exceptions.HinataException;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
@@ -12,6 +13,7 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -37,7 +39,7 @@ public class CmdSetNSFW implements Command {
 
     private final CommandData slashInfo = new CommandData(this.getDescription().name(), this.getDescription().description())
             .addOptions(new OptionData(CHANNEL, optionName, "channel")
-                    .setRequired(true));
+                    .setRequired(false));
 
     public CmdSetNSFW(Hinata bot) {
         this.bot = bot;
@@ -45,49 +47,27 @@ public class CmdSetNSFW implements Command {
     }
 
     @Override
-    public void runSlash(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) {
-        MessageChannel mc = Objects.requireNonNull(event.getOption(this.optionName)).getAsMessageChannel();
-        EmbedBuilder embed = new EmbedBuilder();
-        TextChannel channel = Objects.requireNonNull(guild.getTextChannelById(mc.getId()));
+    public void runSlash(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) throws Exception {
+        var option = event.getOption(this.optionName);
 
-        if (channel.isNSFW()) {
-            channel.getManager().setNSFW(false).queue();
-            embed.setColor(Colors.NORMAL.getCode())
-                    .setTitle(this.getDescription().name())
-                    .setDescription("**" + channel.getName() + "** is now marked as **SFW**")
-                    .setTimestamp(ZonedDateTime.now());
-        } else {
-            channel.getManager().setNSFW(true).queue();
-            embed.setColor(Colors.NORMAL.getCode())
-                    .setTitle(this.getDescription().name())
-                    .setDescription("**" + channel.getName() + "** is now marked as **NSFW**")
-                    .setTimestamp(ZonedDateTime.now());
-        }
+        MessageChannel mc = option != null ? option.getAsMessageChannel() : null;
+        TextChannel channel = mc == null ? tc : guild.getTextChannelById(mc.getId());
 
-        hook.sendMessageEmbeds(embed.build()).queue();
+        if (channel == null)
+            throw new Exception("Channel is null");
+
+        hook.sendMessageEmbeds(toggleNSFW(channel)).queue();
     }
 
     @Override
-    public void runCommand(Message msg, Guild guild, TextChannel tc, Member member) {
+    public void runCommand(Message msg, Guild guild, TextChannel tc, Member member) throws HinataException {
         String[] arguments = bot.getArguments(msg);
-        EmbedBuilder embed = new EmbedBuilder();
-        TextChannel channel = Objects.requireNonNull(guild.getTextChannelById(arguments[0]));
+        TextChannel channel = arguments.length == 0 ? tc : Objects.requireNonNull(guild.getTextChannelById(arguments[0]));
 
-        if (channel.isNSFW()) {
-            channel.getManager().setNSFW(false).queue();
-            embed.setColor(Colors.NORMAL.getCode())
-                    .setTitle(this.getDescription().name())
-                    .setDescription("**" + channel.getName() + "** is now marked as **SFW**")
-                    .setTimestamp(ZonedDateTime.now());
-        } else {
-            channel.getManager().setNSFW(true).queue();
-            embed.setColor(Colors.NORMAL.getCode())
-                    .setTitle(this.getDescription().name())
-                    .setDescription("**" + channel.getName() + "** is now marked as **NSFW**")
-                    .setTimestamp(ZonedDateTime.now());
-        }
+        if (channel == null)
+            throw new HinataException("No valid channel provided");
 
-        tc.sendMessageEmbeds(embed.build()).queue();
+        tc.sendMessageEmbeds(toggleNSFW(channel)).queue();
     }
 
     @Override
@@ -103,5 +83,23 @@ public class CmdSetNSFW implements Command {
     @Override
     public ArrayList<Permission> getNeededPermissions() {
         return this.permissions;
+    }
+
+    private @NotNull MessageEmbed toggleNSFW(TextChannel channel) {
+        if (channel.isNSFW()) {
+            channel.getManager().setNSFW(false).queue();
+            return new EmbedBuilder().setColor(Colors.NORMAL.getCode())
+                    .setTitle(this.getDescription().name())
+                    .setDescription("**" + channel.getAsMention() + "** is now marked as **SFW**")
+                    .setTimestamp(ZonedDateTime.now())
+                    .build();
+        } else {
+            channel.getManager().setNSFW(true).queue();
+            return new EmbedBuilder().setColor(Colors.NORMAL.getCode())
+                    .setTitle(this.getDescription().name())
+                    .setDescription("**" + channel.getAsMention() + "** is now marked as **NSFW**")
+                    .setTimestamp(ZonedDateTime.now())
+                    .build();
+        }
     }
 }

@@ -6,12 +6,14 @@ import com.github.rainestormee.jdacommand.CommandDescription;
 import hinata.bot.Commands.Command;
 import hinata.bot.Hinata;
 import hinata.bot.constants.Colors;
+import hinata.bot.util.exceptions.HinataException;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.*;
 import java.time.temporal.ChronoUnit;
@@ -66,7 +68,7 @@ public class CmdAccountAge implements Command {
     }
 
     @Override
-    public void runCommand(Message msg, Guild guild, TextChannel tc, Member member) {
+    public void runCommand(Message msg, Guild guild, TextChannel tc, Member member) throws HinataException {
         String[] arguments = bot.getArguments(msg);
         EmbedBuilder embed = new EmbedBuilder()
                 .setColor(Colors.NORMAL.getCode())
@@ -83,7 +85,9 @@ public class CmdAccountAge implements Command {
             member = msg.getMember();
         }
 
-        assert member != null;
+        if (member == null)
+            throw new HinataException("No member was found!");
+
         user = member.getUser();
 
         embed.setTitle("Account age of: " + user.getAsTag())
@@ -102,7 +106,7 @@ public class CmdAccountAge implements Command {
         return new String[]{this.optionName};
     }
 
-    private String calculateAge(OffsetDateTime creationDate) {
+    private @NotNull String calculateAge(@NotNull OffsetDateTime creationDate) {
         ZonedDateTime now = ZonedDateTime.now();
 
         long diff = Math.abs(creationDate.toEpochSecond() - now.toEpochSecond());
