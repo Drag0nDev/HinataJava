@@ -3,6 +3,10 @@ package hinata.bot.Commands;
 import com.github.rainestormee.jdacommand.CommandHandler;
 import hinata.bot.Hinata;
 import hinata.bot.constants.Colors;
+import hinata.bot.database.DbUtils;
+import hinata.bot.database.tables.Server;
+import hinata.bot.database.tables.ServerUser;
+import hinata.bot.database.tables.User;
 import hinata.bot.events.Listener;
 import hinata.bot.util.exceptions.HinataException;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -16,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.SQLException;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.*;
@@ -34,14 +39,16 @@ public class CommandListener extends ListenerAdapter {
 
     private final Hinata bot;
     private final CommandHandler<Message> HANDLER;
+    private final DbUtils dbUtils;
 
     public CommandListener(Hinata bot, CommandHandler<Message> HANDLER) {
         this.bot = bot;
         this.HANDLER = HANDLER;
+        this.dbUtils = bot.getDbUtils();
     }
 
     @Override
-    public void onSlashCommand(SlashCommandEvent event) {
+    public void onSlashCommand(@NotNull SlashCommandEvent event) {
         event.deferReply().queue();
         if (event.getGuild() == null)
             return;
@@ -51,6 +58,15 @@ public class CommandListener extends ListenerAdapter {
             Member member = guild.retrieveMemberById(event.getUser().getId()).complete();
             MessageChannel tc = event.getChannel();
             Member self = guild.getSelfMember();
+
+            try {
+                dbUtils.checkDb(guild, member);
+                dbUtils.addXp(guild, member);
+            } catch (SQLException sql) {
+                LOGGER.error("Something went wrong while checking the database!", sql);
+            } catch (Exception e) {
+                LOGGER.error("an error occurred", e);
+            }
 
             Command command = (Command) HANDLER.findCommand(event.getName());
 
@@ -129,10 +145,19 @@ public class CommandListener extends ListenerAdapter {
         if (event.getChannel().isNews())
             return;
 
-        if (!checkPrefix(msg.getContentRaw()))
-            return;
-
         CMD_EXECUTOR.execute(() -> {
+            try {
+                dbUtils.checkDb(guild, member);
+                dbUtils.addXp(guild, member);
+            } catch (SQLException sql) {
+                LOGGER.error("Something went wrong while checking the database!", sql);
+            } catch (Exception e) {
+                LOGGER.error("an error occurred", e);
+            }
+
+            if (!checkPrefix(msg.getContentRaw()))
+                return;
+
             String raw = msg.getContentRaw();
 
             //find the used prefix

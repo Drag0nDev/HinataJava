@@ -12,6 +12,9 @@ import net.dv8tion.jda.api.interactions.InteractionHook;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.io.File;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -40,6 +43,16 @@ public class Utils {
         return raw;
     }
 
+    public static @NotNull File getFile(@NotNull String fileName) throws URISyntaxException {
+        ClassLoader classLoader = Utils.class.getClassLoader();
+        URL resource = classLoader.getResource(fileName);
+        if (resource == null) {
+            throw new IllegalArgumentException("file not found! " + fileName);
+        }
+
+        return new File(resource.toURI());
+    }
+
     public static @NotNull Message jsonToMessage(@NotNull JsonObject json) {
         MessageBuilder messageBuilder = new MessageBuilder();
 
@@ -51,11 +64,13 @@ public class Utils {
 
         return messageBuilder.build();
     }
+
     public static @NotNull Message jsonToMessage(String str) {
         JsonObject json = stringToJsonEmbed(str);
 
         return jsonToMessage(json);
     }
+
     public static @NotNull MessageEmbed jsonToEmbed(@NotNull JsonObject json) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
 
@@ -119,13 +134,14 @@ public class Utils {
 
         return embedBuilder.build();
     }
+
     public static @NotNull MessageEmbed jsonToEmbed(String str) {
         JsonObject json = stringToJsonEmbed(str);
 
         return jsonToEmbed(json);
     }
 
-    public static void sendNSFWWarning(@NotNull TextChannel tc, @NotNull InteractionHook hook){
+    public static void sendNSFWWarning(@NotNull TextChannel tc, @NotNull InteractionHook hook) {
         EmbedBuilder embed = new EmbedBuilder()
                 .setDescription("This command can't be executed because this channel " + tc.getAsMention() + " is not marked NSFW")
                 .setColor(Colors.ERROR.getCode())
@@ -133,6 +149,7 @@ public class Utils {
 
         hook.sendMessageEmbeds(embed.build()).queue();
     }
+
     public static void sendNSFWWarning(@NotNull TextChannel tc) {
         EmbedBuilder embed = new EmbedBuilder()
                 .setDescription("This command can't be executed because this channel " + tc.getAsMention() + " is not marked NSFW")
@@ -158,6 +175,7 @@ public class Utils {
             return base.getUrl();
         }
     }
+
     public static @NotNull String generateInvite() {
         return Hinata.getBot().getInviteUrl(
                 //for everything and smooth operations
@@ -191,7 +209,7 @@ public class Utils {
         return new DateTimeFormatterBuilder().appendPattern("dd-M-yyyy hh:mm:ss a").toFormatter();
     }
 
-    public static int getChannelAmount(@NotNull List<GuildChannel> channels, ChannelType sort){
+    public static int getChannelAmount(@NotNull List<GuildChannel> channels, ChannelType sort) {
         AtomicInteger amount = new AtomicInteger();
 
         channels.forEach(guildChannel -> {
@@ -202,18 +220,21 @@ public class Utils {
 
         return amount.get();
     }
+
     public static @NotNull String getSystemChannel(@NotNull Guild guild) {
         if (guild.getSystemChannel() == null)
             return "-";
 
         return guild.getSystemChannel().getName();
     }
+
     public static @NotNull String getAfkChannel(@NotNull Guild guild) {
         if (guild.getAfkChannel() == null)
             return "-";
 
         return guild.getAfkChannel().getName();
     }
+
     public static @NotNull String getRegion(@NotNull Guild guild) {
         if (guild.getVoiceChannels().stream().findFirst().isEmpty())
             return "Could not get the region";

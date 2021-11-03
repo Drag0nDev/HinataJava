@@ -1,6 +1,8 @@
 package hinata.bot.Commands;
 
 import hinata.bot.Commands.commands.channels.*;
+import hinata.bot.Commands.commands.currency.CmdBalance;
+import hinata.bot.Commands.commands.currency.CmdDaily;
 import hinata.bot.Commands.commands.emojis.CmdEmoji;
 import hinata.bot.Commands.commands.emojis.CmdEmojiCreate;
 import hinata.bot.Commands.commands.emojis.CmdEmojiDelete;
@@ -37,6 +39,10 @@ public class CommandLoader {
                 new CmdCreateVoice(bot),
                 new CmdDeleteChannel(bot),
                 new CmdSetNSFW(bot),
+
+                //currency commands
+                new CmdBalance(bot),
+                new CmdDaily(bot),
 
                 //emojis
                 new CmdEmoji(bot),
