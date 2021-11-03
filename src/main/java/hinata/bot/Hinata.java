@@ -3,6 +3,7 @@ package hinata.bot;
 import com.github.rainestormee.jdacommand.CommandHandler;
 import hinata.bot.Commands.CommandListener;
 import hinata.bot.Commands.CommandLoader;
+import hinata.bot.database.DbUtils;
 import hinata.bot.util.utils.Config;
 import hinata.bot.events.Listener;
 import net.dv8tion.jda.api.JDA;
@@ -28,6 +29,8 @@ public class Hinata {
     private final Config config = new Config();
     private static final Logger logger = LoggerFactory.getLogger(Listener.class);
 
+    private static DbUtils dbUtils;
+
     private static JDA bot = null;
     private static final String version = "2.0.0";
 
@@ -45,7 +48,9 @@ public class Hinata {
         }
     }
 
-    private void setup() throws LoginException, IOException, ParseException, URISyntaxException {
+    private <Add> void setup() throws LoginException, IOException, ParseException, URISyntaxException {
+        dbUtils = new DbUtils(this);
+
         CMD_HANDLER.registerCommands(new HashSet<>(commandLoader.getCommands()));
 
         bot = JDABuilder
@@ -64,7 +69,7 @@ public class Hinata {
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .build();
 
-        commandLoader.loadSlashCommands(this);
+        commandLoader.loadSlashCommands();
     }
 
     public static JDA getBot() {
@@ -99,5 +104,9 @@ public class Hinata {
 
     public String getVersion() {
         return version;
+    }
+
+    public DbUtils getDbUtils() {
+        return dbUtils;
     }
 }
