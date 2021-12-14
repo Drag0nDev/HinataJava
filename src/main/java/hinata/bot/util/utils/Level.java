@@ -3,7 +3,7 @@ package hinata.bot.util.utils;
 public class Level {
     private final int level;
     private final int xp;
-    private final float percentage;
+    private final int percentage;
     private final int neededXp;
     private final int remainingXp;
 
@@ -33,7 +33,7 @@ public class Level {
         return xp;
     }
 
-    public float getPercentage() {
+    public int getPercentage() {
         return percentage;
     }
 

@@ -4,8 +4,6 @@ import hinata.bot.util.utils.Level;
 
 import java.awt.*;
 import java.sql.Timestamp;
-import java.time.ZonedDateTime;
-import java.util.Date;
 
 public class User {
     public String userId;

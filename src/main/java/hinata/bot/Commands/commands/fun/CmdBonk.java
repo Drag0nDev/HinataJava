@@ -33,7 +33,7 @@ public class CmdBonk implements Command {
 
     private final Hinata bot;
     protected final String optionName = "user";
-    private final CommandData slashInfo =  new CommandData(this.getDescription().name(), this.getDescription().description())
+    private final CommandData slashInfo = new CommandData(this.getDescription().name(), this.getDescription().description())
             .addOptions(new OptionData(USER, optionName, "the person you want to bonk")
                     .setRequired(false));
 
@@ -68,19 +68,21 @@ public class CmdBonk implements Command {
         MessageChannel mc = msg.getChannel();
         String[] arguments = bot.getArguments(msg);
         StringBuilder desc = new StringBuilder();
+        Member user;
 
         if (arguments.length > 0) {
             if (!msg.getMentionedMembers().isEmpty()) {
-                member = msg.getMentionedMembers(guild).get(0);
+                user = msg.getMentionedMembers(guild).get(0);
             } else {
-                member = guild.getMemberById(arguments[0]);
+                user = guild.getMemberById(arguments[0]);
             }
         } else {
-            member = msg.getMember();
+            user = msg.getMember();
         }
 
-        assert member != null;
-        desc.append(member.getAsMention()).append(" ").append(Emotes.BONK.getEmote());
+        if (user == null) return;
+
+        desc.append(user.getAsMention()).append(" ").append(Emotes.BONK.getEmote());
 
         mc.sendMessageEmbeds(embed.setDescription(desc.toString()).build()).queue();
     }

@@ -6,6 +6,7 @@ import hinata.bot.Commands.commands.currency.CmdDaily;
 import hinata.bot.Commands.commands.emojis.CmdEmoji;
 import hinata.bot.Commands.commands.emojis.CmdEmojiCreate;
 import hinata.bot.Commands.commands.emojis.CmdEmojiDelete;
+import hinata.bot.Commands.commands.experience.CmdLevel;
 import hinata.bot.Commands.commands.owner.CmdShutdown;
 import hinata.bot.Commands.commands.owner.CmdTest;
 import hinata.bot.Commands.commands.roles.CmdRole;
@@ -48,6 +49,9 @@ public class CommandLoader {
                 new CmdEmoji(bot),
                 new CmdEmojiCreate(bot),
                 new CmdEmojiDelete(bot),
+
+                //experience
+                new CmdLevel(bot),
 
                 //fun commands
                 new CmdBonk(bot),

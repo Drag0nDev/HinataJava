@@ -3,6 +3,7 @@ build/
 .gradle/
 out/
 logs/
-
+bin/
+src/main/resources/images/custom/
 src/main/java/hinata/bot/Commands/commands/owner/CmdTest.java
 src/main/resources/config.json

@@ -4,13 +4,10 @@ import com.github.rainestormee.jdacommand.CommandAttribute;
 import com.github.rainestormee.jdacommand.CommandDescription;
 import hinata.bot.Commands.Command;
 import hinata.bot.Hinata;
-import hinata.bot.util.exceptions.HinataException;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.interactions.InteractionHook;
 
 import static hinata.bot.util.utils.Utils.jsonToEmbed;
 
@@ -41,7 +38,7 @@ public class CmdShutdown implements Command {
                 "}";
 
         msg.getTextChannel().sendMessageEmbeds(jsonToEmbed(test)).complete();
-        this.bot.getBot().shutdownNow();
+        Hinata.getBot().shutdownNow();
         System.exit(0);
     }
 }

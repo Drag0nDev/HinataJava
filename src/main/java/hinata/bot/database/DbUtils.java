@@ -40,7 +40,7 @@ public class DbUtils {
         this.bot = bot;
     }
 
-    //database check
+    // database check
     public void checkDb(Guild guild, @NotNull Member member) throws SQLException {
         if (member.getUser().isBot())
             return;
@@ -99,9 +99,9 @@ public class DbUtils {
         return !rs.next();
     }
 
-    //add to database
+    // add to database
     /*
-    TODO: make all functions to add new instances
+     * TODO: make all functions to add new instances
      */
     public void addCategory(@NotNull Category category) throws SQLException {
         PreparedStatement stmt = conn.prepareStatement("insert into categories" +
@@ -156,7 +156,8 @@ public class DbUtils {
 
     public void addUser(@NotNull User user) throws SQLException {
         PreparedStatement stmt = conn.prepareStatement("insert into users" +
-                " (userid, usertag, balance, xp, isBanned, dailystreak, color, background, badge1, badge2, badge3, badge4, badge5, badge6)" +
+                " (userid, usertag, balance, xp, isBanned, dailystreak, color, background, badge1, badge2, badge3, badge4, badge5, badge6)"
+                +
                 " values" +
                 " (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
 
@@ -193,9 +194,9 @@ public class DbUtils {
         stmt.executeUpdate();
     }
 
-    //getters
+    // getters
     /*
-    TODO: make all getters that are needed
+     * TODO: make all getters that are needed
      */
     public User getUser(String id) throws SQLException {
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM users where userId = ?;");
@@ -225,8 +226,6 @@ public class DbUtils {
 
         getUsers.setString(1, server.serverId);
         ResultSet resultUsers = getUsers.executeQuery();
-
-        List<ServerUser> users = new ArrayList<ServerUser>();
 
         while (resultUsers.next()) {
             server.users.add(getServerUserObject(resultUsers));
@@ -262,9 +261,44 @@ public class DbUtils {
         return users;
     }
 
-    //updates
+    public int getGlobalRank(String userId) throws SQLException {
+        boolean found = false;
+        int place = 0;
+        PreparedStatement stmt = conn.prepareStatement("select * from users order by xp DESC;");
+        ResultSet rs = stmt.executeQuery();
+
+        while (rs.next() && !found){
+            String dbId = rs.getString("userid");
+            if(dbId.equals(userId)){
+                found = !found;
+                place = rs.getRow();
+            }
+        }
+        
+        return place;
+    }
+
+    public int getServerRank(String userId, String serverId) throws SQLException {
+        boolean found = false;
+        int place = 0;
+        PreparedStatement stmt = conn.prepareStatement("select * from serverusers where serverid = ? order by xp DESC;");
+        stmt.setString(1, serverId);
+        ResultSet rs = stmt.executeQuery();
+
+        while (rs.next() && !found){
+            String dbId = rs.getString("userid");
+            if(dbId.equals(userId)){
+                found = !found;
+                place = rs.getRow();
+            }
+        }
+        
+        return place;
+    }
+
+    // updates
     /*
-    TODO: make all instance updates (including list updates if needed)
+     * TODO: make all instance updates (including list updates if needed)
      */
     public void updateUser(@NotNull User user) throws SQLException {
         PreparedStatement stmt = conn.prepareStatement("UPDATE users" +
@@ -311,7 +345,8 @@ public class DbUtils {
     }
 
     public void updateUsers(@NotNull List<User> users) throws SQLException {
-        for (User user : users) updateUser(user);
+        for (User user : users)
+            updateUser(user);
     }
 
     public void updateServerUser(@NotNull ServerUser user) throws SQLException {
@@ -366,20 +401,20 @@ public class DbUtils {
         }
     }
 
-    //delete functions
+    // delete functions
     public void deleteServerUser(@NotNull ServerUser user) throws SQLException {
-        //delete the serveruser
+        // delete the serveruser
         PreparedStatement delUser = conn.prepareStatement("delete from serverusers" +
                 " where id=?;");
         delUser.setInt(1, user.id);
 
-        //delete the timers from the server
+        // delete the timers from the server
         PreparedStatement delTimers = conn.prepareStatement("delete from timers" +
                 " where serverId=? AND userId=?;");
         delTimers.setString(1, user.serverId);
         delTimers.setString(2, user.userId);
 
-        //delete the warnings from the server
+        // delete the warnings from the server
         PreparedStatement delWarnings = conn.prepareStatement("delete from warnings" +
                 " where serverId=? AND userId=?;");
         delWarnings.setString(1, user.serverId);
@@ -391,32 +426,32 @@ public class DbUtils {
     }
 
     public void deleteServer(@NotNull Server server) throws SQLException {
-        //delete the server
+        // delete the server
         PreparedStatement delServer = conn.prepareStatement("delete from servers" +
                 " where serverId=?;");
         delServer.setString(1, server.serverId);
 
-        //delete the associated rows in ServerUsers
+        // delete the associated rows in ServerUsers
         PreparedStatement delSU = conn.prepareStatement("delete from serversusers" +
                 " where serverId=?;");
         delSU.setString(1, server.serverId);
 
-        //delete the associated settings
+        // delete the associated settings
         PreparedStatement delSettings = conn.prepareStatement("delete from serversettings" +
                 " where serverId=?;");
         delSettings.setString(1, server.serverId);
 
-        //delete the timers from the server
+        // delete the timers from the server
         PreparedStatement delTimers = conn.prepareStatement("delete from timers" +
                 " where serverId=?;");
         delTimers.setString(1, server.serverId);
 
-        //delete the warnings from the server
+        // delete the warnings from the server
         PreparedStatement delWarnings = conn.prepareStatement("delete from warnings" +
                 " where serverId=?;");
         delWarnings.setString(1, server.serverId);
 
-        //execute the scripts
+        // execute the scripts
         delSU.executeUpdate();
         delSettings.executeUpdate();
         delTimers.executeUpdate();
@@ -424,7 +459,7 @@ public class DbUtils {
         delServer.executeUpdate();
     }
 
-    //conversions JDA to Database class
+    // conversions JDA to Database class
     public @NotNull User memberToUser(@NotNull Member member) {
         User user = new User();
 
@@ -454,7 +489,7 @@ public class DbUtils {
         return user;
     }
 
-    //private setter functions
+    // private setter functions
     protected @NotNull Category getCategoryObject(@NotNull ResultSet rs) throws SQLException {
         Category category = new Category();
 
@@ -545,6 +580,8 @@ public class DbUtils {
             user.lastMessageDate = rs.getTimestamp("lastMessageDate");
 
             user.user = getUser(user.userId);
+
+            user.setLevel(new Level(user.xp, bot.getConfig().getLevelXp()));
         }
 
         return user;
@@ -578,8 +615,6 @@ public class DbUtils {
             timer.reason = rs.getString("reason");
 
             timer.expiration = rs.getTimestamp("expiration");
-
-            return timer;
         }
 
         return timer;
