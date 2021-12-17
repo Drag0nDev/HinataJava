@@ -5,6 +5,7 @@ import com.github.rainestormee.jdacommand.CommandDescription;
 import hinata.bot.Commands.Command;
 import hinata.bot.Hinata;
 import hinata.bot.constants.Colors;
+import hinata.bot.constants.Emotes;
 import hinata.bot.util.exceptions.HinataException;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
@@ -51,10 +52,7 @@ public class CmdBalance implements Command {
     public void runSlash(Guild guild, TextChannel tc, Member member, SlashCommandEvent event, InteractionHook hook) throws Exception {
         OptionMapping option = event.getOption(optionName);
 
-        if (option == null)
-            throw new Exception("Something went wrong with the slash command");
-
-        User user = event.getOption(this.optionName) != null ? option.getAsUser() : member.getUser();
+        User user = option != null ? option.getAsUser() : member.getUser();
 
         hook.sendMessageEmbeds(getBalance(user)).queue();
     }
@@ -92,7 +90,7 @@ public class CmdBalance implements Command {
         hinata.bot.database.tables.User userDb = bot.getDbUtils().getUser(user.getId());
 
         return new EmbedBuilder().setColor(Colors.NORMAL.getCode())
-                .setDescription("You have **" + userDb.balance + "** " + bot.getConfig().getCurrencyEmoji())
+                .setDescription("You have **" + userDb.balance + "** " + Emotes.CURRENCY.getEmote())
                 .build();
     }
 }

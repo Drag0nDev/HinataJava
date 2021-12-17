@@ -5,6 +5,7 @@ import com.github.rainestormee.jdacommand.CommandDescription;
 import hinata.bot.Commands.Command;
 import hinata.bot.Hinata;
 import hinata.bot.constants.Colors;
+import hinata.bot.constants.Emotes;
 import hinata.bot.database.tables.User;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
@@ -35,8 +36,6 @@ public class CmdDaily implements Command {
     protected final String optionName = "user";
 
     private final CommandData slashInfo = new CommandData(this.getDescription().name(), this.getDescription().description());
-
-    private final int dailyReward = 100;
 
     public CmdDaily(Hinata bot) {
         this.bot = bot;
@@ -86,6 +85,7 @@ public class CmdDaily implements Command {
 
         }
 
+        int dailyReward = 100;
         daily = dailyReward + ((dailyReward / 10) * user.dailyStreak);
         user.balance += daily;
         user.dailyTaken = new Timestamp(new Date().getTime());
@@ -94,8 +94,8 @@ public class CmdDaily implements Command {
         bot.getDbUtils().updateUser(user);
         return new EmbedBuilder()
                 .setColor(Colors.NORMAL.getCode())
-                .setDescription("You have claimed your daily of **" + daily + bot.getConfig().getCurrencyEmoji() + "**.\n" +
-                        "Your total balance now is at **" + user.balance + bot.getConfig().getCurrencyEmoji() + "**.\n" +
+                .setDescription("You have claimed your daily of **" + daily + Emotes.CURRENCY.getEmote() + "**.\n" +
+                        "Your total balance now is at **" + user.balance + Emotes.CURRENCY.getEmote() + "**.\n" +
                         "Your daily streak is at **" + (user.dailyStreak - 1) + " day(s)**.")
                 .setTimestamp(ZonedDateTime.now())
                 .build();

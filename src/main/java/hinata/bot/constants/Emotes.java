@@ -4,12 +4,12 @@ import javax.xml.transform.OutputKeys;
 
 public enum Emotes {
     //Animated emotes
-    CURRENCY("fireheart", "777675712789217346", true),
-    BONK    ("bonk",      "735549944814895115", true),
+    BONK    ("bonk", "735549944814895115", true),
 
     //Static emotes
-    YES ("yes", "\u2705", false),
-    NO  ("no", "\u274C", false)
+    CURRENCY("fireheart",   "777675712789217346",   false),
+    YES     ("yes",         "\u2705",               false),
+    NO      ("no",          "\u274C",               false)
     ;
 
     private final String emoteName;
