@@ -150,7 +150,12 @@ public class CommandListener extends ListenerAdapter {
                 dbUtils.checkDb(guild, member);
                 dbUtils.addXp(guild, member);
             } catch (SQLException sql) {
-                LOGGER.error("Something went wrong while checking the database!", sql);
+                if (sql.getMessage().equals("This connection has been closed.")) {
+                    LOGGER.info("trying to reconnect to the database!");
+                    dbUtils.reconnect();
+                } else {
+                    LOGGER.error("Something went wrong while checking the database!", sql);
+                }
             } catch (Exception e) {
                 LOGGER.error("an error occurred", e);
             }

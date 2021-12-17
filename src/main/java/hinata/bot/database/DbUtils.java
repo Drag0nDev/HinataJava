@@ -17,18 +17,22 @@ import static hinata.bot.Hinata.getLogger;
 
 public class DbUtils {
     private final Hinata bot;
+    private final String url;
+    private final Properties props;
 
     Connection conn = null;
 
     public DbUtils(@NotNull Hinata bot) {
 
-        String url = bot.getConfig().getUrl();
+        String url = this.url = bot.getConfig().getUrl();
         String user = bot.getConfig().getUser();
         String password = bot.getConfig().getPassword();
 
         Properties props = new Properties();
         props.setProperty("user", user);
         props.setProperty("password", password);
+
+        this.props = props;
 
         try {
             this.conn = DriverManager.getConnection(url, props);
@@ -38,6 +42,16 @@ public class DbUtils {
         }
 
         this.bot = bot;
+    }
+
+    //reconnect to the database if the connection has been closed unexpectedly
+    public void reconnect() {
+        try {
+            conn = DriverManager.getConnection(url, props);
+            getLogger().info("Successfully reconnected to the database!");
+        } catch (SQLException e) {
+            getLogger().error("Failed to reconnect to the database", e);
+        }
     }
 
     // database check
@@ -60,9 +74,7 @@ public class DbUtils {
     }
 
     public boolean checkUserDb(@NotNull User user) throws SQLException {
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM users where userId = ?;",
-                ResultSet.TYPE_SCROLL_SENSITIVE,
-                ResultSet.CONCUR_UPDATABLE);
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM users where userId = ?;");
         stmt.setString(1, user.userId);
 
         ResultSet rs = stmt.executeQuery();
@@ -71,12 +83,8 @@ public class DbUtils {
     }
 
     public boolean checkServerDb(@NotNull Server server) throws SQLException {
-        PreparedStatement serverSql = conn.prepareStatement("SELECT * FROM servers where serverId = ?;",
-                ResultSet.TYPE_SCROLL_SENSITIVE,
-                ResultSet.CONCUR_UPDATABLE);
-        PreparedStatement settings = conn.prepareStatement("SELECT * FROM serversettings where serverId = ?;",
-                ResultSet.TYPE_SCROLL_SENSITIVE,
-                ResultSet.CONCUR_UPDATABLE);
+        PreparedStatement serverSql = conn.prepareStatement("SELECT * FROM servers where serverId = ?;");
+        PreparedStatement settings = conn.prepareStatement("SELECT * FROM serversettings where serverId = ?;");
 
         serverSql.setString(1, server.serverId);
         settings.setString(1, server.serverId);
@@ -252,7 +260,7 @@ public class DbUtils {
 
         ResultSet rs = stmt.executeQuery();
 
-        List<User> users = new ArrayList<User>();
+        List<User> users = new ArrayList<>();
 
         while (rs.next()) {
             users.add(getUserObject(rs));
@@ -270,7 +278,7 @@ public class DbUtils {
         while (rs.next() && !found){
             String dbId = rs.getString("userid");
             if(dbId.equals(userId)){
-                found = !found;
+                found = true;
                 place = rs.getRow();
             }
         }
@@ -288,7 +296,7 @@ public class DbUtils {
         while (rs.next() && !found){
             String dbId = rs.getString("userid");
             if(dbId.equals(userId)){
-                found = !found;
+                found = true;
                 place = rs.getRow();
             }
         }
