@@ -4,7 +4,7 @@ import com.github.rainestormee.jdacommand.CommandAttribute;
 import com.github.rainestormee.jdacommand.CommandDescription;
 import hinata.bot.Commands.Command;
 import hinata.bot.Hinata;
-import hinata.bot.constants.Colors;
+import hinata.constants.Colors;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;

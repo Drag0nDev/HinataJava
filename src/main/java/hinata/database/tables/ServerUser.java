@@ -1,6 +1,6 @@
-package hinata.bot.database.tables;
+package hinata.database.tables;
 
-import hinata.bot.util.utils.Level;
+import hinata.util.utils.Level;
 
 import java.sql.Timestamp;
 

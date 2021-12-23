@@ -4,11 +4,9 @@ import com.github.rainestormee.jdacommand.CommandAttribute;
 import com.github.rainestormee.jdacommand.CommandDescription;
 import hinata.bot.Commands.Command;
 import hinata.bot.Hinata;
-import hinata.bot.constants.Colors;
-import hinata.bot.database.tables.ServerUser;
-import hinata.bot.database.tables.User;
-import hinata.bot.util.utils.Level;
-import net.dv8tion.jda.api.EmbedBuilder;
+import hinata.constants.Colors;
+import hinata.database.tables.ServerUser;
+import hinata.database.tables.User;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -28,10 +26,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.Objects;
-import java.util.regex.Pattern;
 
-import static hinata.bot.util.utils.Utils.getFile;
-import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
+import static hinata.util.utils.Utils.getFile;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.USER;
 
 @CommandDescription(

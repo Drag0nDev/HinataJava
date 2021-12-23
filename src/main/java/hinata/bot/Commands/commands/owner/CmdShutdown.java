@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 
-import static hinata.bot.util.utils.Utils.jsonToEmbed;
+import static hinata.util.utils.Utils.jsonToEmbed;
 
 @CommandDescription(
         name = "shutdown",

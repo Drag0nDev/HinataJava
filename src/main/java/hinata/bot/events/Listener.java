@@ -1,7 +1,7 @@
 package hinata.bot.events;
 
 import hinata.bot.Hinata;
-import hinata.bot.util.utils.Config;
+import hinata.util.utils.Config;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.json.simple.parser.ParseException;

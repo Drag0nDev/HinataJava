@@ -1,8 +1,8 @@
-package hinata.bot.util.utils;
+package hinata.util.utils;
 
 import com.google.gson.*;
 import hinata.bot.Hinata;
-import hinata.bot.constants.Colors;
+import hinata.constants.Colors;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.MessageBuilder;

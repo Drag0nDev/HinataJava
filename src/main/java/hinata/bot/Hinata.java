@@ -3,8 +3,8 @@ package hinata.bot;
 import com.github.rainestormee.jdacommand.CommandHandler;
 import hinata.bot.Commands.CommandListener;
 import hinata.bot.Commands.CommandLoader;
-import hinata.bot.database.DbUtils;
-import hinata.bot.util.utils.Config;
+import hinata.database.DbUtils;
+import hinata.util.utils.Config;
 import hinata.bot.events.Listener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.*;
 
-import static hinata.bot.util.utils.Utils.getArgs;
+import static hinata.util.utils.Utils.getArgs;
 
 public class Hinata {
     private final Config config = new Config();

@@ -1,4 +1,4 @@
-package hinata.bot.constants;
+package hinata.constants;
 
 import javax.xml.transform.OutputKeys;
 

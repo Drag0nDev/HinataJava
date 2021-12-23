@@ -4,8 +4,8 @@ import com.github.rainestormee.jdacommand.AbstractCommand;
 import com.github.rainestormee.jdacommand.*;
 import hinata.bot.Commands.Command;
 import hinata.bot.Hinata;
-import hinata.bot.constants.Colors;
-import hinata.bot.util.utils.AsciiTable;
+import hinata.constants.Colors;
+import hinata.util.utils.AsciiTable;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
@@ -17,7 +17,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import java.time.ZonedDateTime;
 import java.util.*;
 
-import static hinata.bot.util.utils.Utils.generateSupportInvite;
+import static hinata.util.utils.Utils.generateSupportInvite;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
 
 @CommandDescription(

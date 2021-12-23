@@ -4,9 +4,9 @@ import com.github.rainestormee.jdacommand.CommandAttribute;
 import com.github.rainestormee.jdacommand.CommandDescription;
 import hinata.bot.Commands.Command;
 import hinata.bot.Hinata;
-import hinata.bot.constants.Colors;
-import hinata.bot.constants.Emotes;
-import hinata.bot.util.exceptions.HinataException;
+import hinata.constants.Colors;
+import hinata.constants.Emotes;
+import hinata.util.exceptions.HinataException;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
@@ -15,11 +15,6 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
-import java.sql.SQLException;
-import java.util.Date;
-import java.util.Objects;
-
-import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.USER;
 
 @CommandDescription(
@@ -87,7 +82,7 @@ public class CmdBalance implements Command {
     }
 
     private MessageEmbed getBalance(User user) throws Exception {
-        hinata.bot.database.tables.User userDb = bot.getDbUtils().getUser(user.getId());
+        hinata.database.tables.User userDb = bot.getDbUtils().getUser(user.getId());
 
         return new EmbedBuilder().setColor(Colors.NORMAL.getCode())
                 .setDescription("You have **" + userDb.balance + "** " + Emotes.CURRENCY.getEmote())

@@ -1,4 +1,4 @@
-package hinata.bot.util.utils;
+package hinata.util.utils;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -9,7 +9,7 @@ import java.io.*;
 import java.net.URISyntaxException;
 import java.util.List;
 
-import static hinata.bot.util.utils.Utils.getFile;
+import static hinata.util.utils.Utils.getFile;
 
 public class Config {
     private final String token;

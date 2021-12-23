@@ -1,7 +1,7 @@
-package hinata.bot.constants;
+package hinata.constants;
 
-import hinata.bot.util.apiHandling.APOD;
-import hinata.bot.util.apiHandling.JsonBodyHandler;
+import hinata.util.apiHandling.APOD;
+import hinata.util.apiHandling.JsonBodyHandler;
 
 import java.net.URI;
 import java.net.http.HttpClient;

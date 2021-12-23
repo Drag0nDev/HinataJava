@@ -4,8 +4,8 @@ import com.github.rainestormee.jdacommand.CommandAttribute;
 import com.github.rainestormee.jdacommand.CommandDescription;
 import hinata.bot.Commands.Command;
 import hinata.bot.Hinata;
-import hinata.bot.constants.Colors;
-import hinata.bot.util.exceptions.HinataException;
+import hinata.constants.Colors;
+import hinata.util.exceptions.HinataException;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
@@ -14,7 +14,7 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 
 import java.time.ZonedDateTime;
 
-import static hinata.bot.util.utils.Utils.*;
+import static hinata.util.utils.Utils.*;
 
 @CommandDescription(
         name = "serverinfo",

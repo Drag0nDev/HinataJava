@@ -1,4 +1,4 @@
-package hinata.bot.database.tables;
+package hinata.database.tables;
 
 public class Inventory {
     public int id;

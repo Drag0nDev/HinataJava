@@ -2,13 +2,10 @@ package hinata.bot.Commands;
 
 import com.github.rainestormee.jdacommand.CommandHandler;
 import hinata.bot.Hinata;
-import hinata.bot.constants.Colors;
-import hinata.bot.database.DbUtils;
-import hinata.bot.database.tables.Server;
-import hinata.bot.database.tables.ServerUser;
-import hinata.bot.database.tables.User;
+import hinata.constants.Colors;
+import hinata.database.DbUtils;
 import hinata.bot.events.Listener;
-import hinata.bot.util.exceptions.HinataException;
+import hinata.util.exceptions.HinataException;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
@@ -26,8 +23,8 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.regex.*;
 
-import static hinata.bot.util.utils.Utils.getArgs;
-import static hinata.bot.util.utils.Utils.generateSupportInvite;
+import static hinata.util.utils.Utils.getArgs;
+import static hinata.util.utils.Utils.generateSupportInvite;
 
 public class CommandListener extends ListenerAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(Listener.class);

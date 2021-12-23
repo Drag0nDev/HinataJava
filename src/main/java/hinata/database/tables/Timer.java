@@ -1,4 +1,4 @@
-package hinata.bot.database.tables;
+package hinata.database.tables;
 
 import java.sql.Timestamp;
 

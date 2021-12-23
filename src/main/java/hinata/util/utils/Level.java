@@ -1,4 +1,4 @@
-package hinata.bot.util.utils;
+package hinata.util.utils;
 
 public class Level {
     private final int level;

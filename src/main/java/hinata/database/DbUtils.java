@@ -1,8 +1,8 @@
-package hinata.bot.database;
+package hinata.database;
 
 import hinata.bot.Hinata;
-import hinata.bot.database.tables.*;
-import hinata.bot.util.utils.Level;
+import hinata.database.tables.*;
+import hinata.util.utils.Level;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import org.jetbrains.annotations.NotNull;
