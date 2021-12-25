@@ -49,7 +49,7 @@ public class CmdEmojiCreate implements Command {
 
     public CmdEmojiCreate(Hinata bot) {
         this.bot = bot;
-        permissions.add(Permission.MANAGE_EMOTES);
+        permissions.add(Permission.MANAGE_EMOTES_AND_STICKERS);
     }
 
     @Override

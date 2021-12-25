@@ -185,11 +185,11 @@ public class Utils {
                 Permission.MANAGE_CHANNEL, Permission.MANAGE_SERVER,
                 Permission.MESSAGE_ADD_REACTION,
                 Permission.VIEW_AUDIT_LOGS, Permission.VIEW_CHANNEL,
-                Permission.MESSAGE_WRITE, Permission.MESSAGE_MANAGE, Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_ATTACH_FILES,
+                Permission.MESSAGE_SEND, Permission.MESSAGE_MANAGE, Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_ATTACH_FILES,
                 Permission.MESSAGE_HISTORY, Permission.MESSAGE_EXT_EMOJI,
                 Permission.VOICE_USE_VAD,
                 Permission.NICKNAME_CHANGE,
-                Permission.NICKNAME_MANAGE, Permission.MANAGE_ROLES, Permission.MANAGE_WEBHOOKS, Permission.MANAGE_EMOTES
+                Permission.NICKNAME_MANAGE, Permission.MANAGE_ROLES, Permission.MANAGE_WEBHOOKS, Permission.MANAGE_EMOTES_AND_STICKERS
         );
     }
 

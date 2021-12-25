@@ -5,6 +5,7 @@ import com.github.rainestormee.jdacommand.CommandDescription;
 import hinata.bot.Commands.Command;
 import hinata.bot.Hinata;
 import hinata.constants.Colors;
+import hinata.util.exceptions.HinataException;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
@@ -41,7 +42,7 @@ public class CmdEmojiDelete implements Command {
 
     public CmdEmojiDelete(Hinata bot) {
         this.bot = bot;
-        permissions.add(Permission.MANAGE_EMOTES);
+        permissions.add(Permission.MANAGE_EMOTES_AND_STICKERS);
     }
 
     @Override
@@ -53,15 +54,18 @@ public class CmdEmojiDelete implements Command {
                 .setTimestamp(ZonedDateTime.now());
 
         try {
+            if (guild.getEmotesByName(name, true).stream().findFirst().isEmpty())
+                throw new HinataException("no emoji with **" + name + "** found!");
+
             Emote emoji = guild.getEmotesByName(name, true).stream().findFirst().get();
 
             emoji.delete().complete();
 
             embed.setDescription("The emoji **" + name + "** was successfully deleted!");
         }
-        catch (NoSuchElementException e) {
+        catch (HinataException e) {
             embed.setColor(Colors.ERROR.getCode())
-                    .setDescription("no emoji with **" + name + "** found!");
+                    .setDescription(e.getMessage());
         }
 
         hook.sendMessageEmbeds(embed.build()).queue();
@@ -86,15 +90,18 @@ public class CmdEmojiDelete implements Command {
         String name = arguments[0];
 
         try {
+            if (guild.getEmotesByName(name, true).stream().findFirst().isEmpty())
+                throw new HinataException("no emoji with **" + name + "** found!");
+
             Emote emoji = guild.getEmotesByName(name, true).stream().findFirst().get();
 
             emoji.delete().complete();
 
             embed.setDescription("The emoji **" + name + "** was successfully deleted!");
         }
-        catch (NoSuchElementException e) {
+        catch (HinataException e) {
             embed.setColor(Colors.ERROR.getCode())
-                    .setDescription("no emoji with **" + name + "** found!");
+                    .setDescription(e.getMessage());
         }
 
         tc.sendMessageEmbeds(embed.build()).queue();

@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import org.jetbrains.annotations.NotNull;
@@ -70,7 +70,7 @@ public class CommandListener extends ListenerAdapter {
             if (command == null)
                 return;
 
-            if (!self.hasPermission((GuildChannel) tc, Permission.MESSAGE_WRITE))
+            if (!self.hasPermission((GuildChannel) tc, Permission.MESSAGE_SEND))
                 return;
 
             StringBuilder args = new StringBuilder();
@@ -125,7 +125,10 @@ public class CommandListener extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
+    public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+        if (!event.isFromGuild())
+            return;
+
         Message msg = event.getMessage();
         Guild guild = event.getGuild();
         Member member = event.getMember();
@@ -137,9 +140,6 @@ public class CommandListener extends ListenerAdapter {
             return;
 
         if (member.getUser().isBot())
-            return;
-
-        if (event.getChannel().isNews())
             return;
 
         CMD_EXECUTOR.execute(() -> {
@@ -168,7 +168,7 @@ public class CommandListener extends ListenerAdapter {
             int i;
             String[] args = Arrays.copyOfRange(raw.trim().split("\\s+"), 0, 10);
 
-            TextChannel tc = event.getChannel();
+            TextChannel tc = event.getTextChannel();
             Member self = guild.getSelfMember();
 
             if (args[0] == null)
@@ -179,7 +179,7 @@ public class CommandListener extends ListenerAdapter {
             if (command == null)
                 return;
 
-            if (!self.hasPermission(tc, Permission.MESSAGE_WRITE))
+            if (!self.hasPermission(tc, Permission.MESSAGE_SEND))
                 return;
 
             try {
